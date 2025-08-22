@@ -3,11 +3,13 @@
 ## 🚀 Deploy Backend on Render.com (FREE)
 
 ### Step 1: Create Render Account
+
 1. Go to [render.com](https://render.com)
 2. Sign up with your GitHub account
 3. Connect your GitHub repository
 
 ### Step 2: Deploy Backend
+
 1. Click "New +" → "Web Service"
 2. Connect your GitHub repo: `vaidyasen/my-portfolio`
 3. Configure the service:
@@ -19,12 +21,14 @@
    - **Instance Type**: `Free`
 
 ### Step 3: Environment Variables (in Render dashboard)
+
 ```
 GIN_MODE=release
 PORT=10000
 ```
 
 ### Step 4: Get Your Backend URL
+
 After deployment, you'll get a URL like: `https://ritik-portfolio-backend.onrender.com`
 
 ---
@@ -32,18 +36,22 @@ After deployment, you'll get a URL like: `https://ritik-portfolio-backend.onrend
 ## 🌐 Deploy Frontend on Vercel (FREE)
 
 ### Step 1: Install Vercel CLI (Already Done)
+
 ```bash
 npm install -g vercel
 ```
 
 ### Step 2: Deploy Frontend
+
 ```bash
 cd client
 vercel --prod
 ```
 
 ### Step 3: Set Environment Variables in Vercel
+
 In your Vercel dashboard:
+
 ```
 REACT_APP_API_URL=https://ritik-portfolio-backend.onrender.com
 GENERATE_SOURCEMAP=false
@@ -54,6 +62,7 @@ GENERATE_SOURCEMAP=false
 ## 🔧 Alternative: Deploy Both on Fly.io (FREE)
 
 ### Option 1: Use Fly.io for both frontend and backend
+
 1. Install Fly CLI: `curl -L https://fly.io/install.sh | sh`
 2. Run `fly auth signup`
 3. Deploy backend: `fly launch` (from server directory)
@@ -64,11 +73,13 @@ GENERATE_SOURCEMAP=false
 ## 📱 Quick Deploy Commands
 
 ### Backend (Render)
+
 1. Push to GitHub (already done)
 2. Go to render.com and connect your repo
 3. Use the settings above
 
 ### Frontend (Vercel)
+
 ```bash
 cd /Users/rvaidyas/Desktop/Code/projects/my-portfolio/my-portfolio/client
 vercel login
@@ -98,6 +109,7 @@ vercel --prod
 ## 🛠️ Troubleshooting
 
 If your app doesn't work:
+
 1. Check Render logs for backend errors
 2. Check Vercel function logs
 3. Verify environment variables are set

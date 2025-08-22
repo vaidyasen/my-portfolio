@@ -4,7 +4,7 @@ module.exports = {
     "./src/**/*.{js,jsx,ts,tsx}",
     "./public/index.html",
     "./src/pages/*.{js,jsx}",
-    "./src/components/*.{js,jsx}",
+    "./src/components/*.{js,jsx}"
   ],
   darkMode: "class",
   theme: {

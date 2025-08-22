@@ -3,18 +3,33 @@ package controllers
 import (
 	"net/http"
 
+	"github.com/ritikvaidyasen/portfolio-server/config"
+	"github.com/ritikvaidyasen/portfolio-server/models"
+
 	"github.com/gin-gonic/gin"
 )
 
-type Project struct {
-	Title       string `json:"Title"`
-	Description string `json:"Description"`
-}
-
 func GetProjects(c *gin.Context) {
-	projects := []Project{
-		{Title: "GamerIT", Description: "MERN app for gamer community & matchmaking"},
-		{Title: "Complaint Box", Description: "Full stack complaint resolution platform"},
+	var projects []models.Project
+	
+	// Check if filtering by featured projects
+	featured := c.Query("featured")
+	query := config.DB
+	
+	if featured == "true" {
+		query = query.Where("featured = ?", true)
 	}
-	c.JSON(http.StatusOK, projects)
+	
+	// Get projects from database
+	if err := query.Find(&projects).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to fetch projects",
+		})
+		return
+	}
+	
+	c.JSON(http.StatusOK, gin.H{
+		"projects": projects,
+		"count":    len(projects),
+	})
 }

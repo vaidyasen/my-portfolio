@@ -54,12 +54,35 @@ func AdminLogin(c *gin.Context) {
 }
 
 func CreateAdminUser(c *gin.Context) {
-	// This is for initial setup - you might want to protect this endpoint
-	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte("admin123"), bcrypt.DefaultCost)
+	// Request structure for creating admin
+	var req struct {
+		Username string `json:"username" binding:"required"`
+		Email    string `json:"email" binding:"required"`
+		Password string `json:"password" binding:"required"`
+	}
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Check if admin already exists
+	var existingUser models.User
+	if err := config.DB.Where("role = ?", "admin").First(&existingUser).Error; err == nil {
+		c.JSON(http.StatusConflict, gin.H{"error": "Admin user already exists"})
+		return
+	}
+
+	// Hash the password
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
+		return
+	}
 	
 	user := models.User{
-		Username: "admin",
-		Email:    "admin@example.com",
+		Username: req.Username,
+		Email:    req.Email,
 		Password: string(hashedPassword),
 		Role:     "admin",
 	}
@@ -70,22 +93,94 @@ func CreateAdminUser(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"message": "Admin user created successfully"})
+	c.JSON(http.StatusCreated, gin.H{
+		"message": "Admin user created successfully",
+		"username": user.Username,
+		"email": user.Email,
+	})
 }
 
 func GetAdminDashboard(c *gin.Context) {
-	var projectCount, skillCount, blogCount int64
+	var projectCount, skillCount, blogCount, contactCount, unreadContactCount int64
 	
 	config.DB.Model(&models.Project{}).Count(&projectCount)
 	config.DB.Model(&models.Skill{}).Count(&skillCount)
 	config.DB.Model(&models.BlogPost{}).Count(&blogCount)
+	config.DB.Model(&models.Contact{}).Count(&contactCount)
+	config.DB.Model(&models.Contact{}).Where("read = ?", false).Count(&unreadContactCount)
 	
 	c.JSON(http.StatusOK, gin.H{
 		"stats": gin.H{
-			"projects": projectCount,
-			"skills":   skillCount,
-			"blogs":    blogCount,
+			"projects":         projectCount,
+			"skills":          skillCount,
+			"blogs":           blogCount,
+			"contacts":        contactCount,
+			"unread_contacts": unreadContactCount,
 		},
+	})
+}
+
+// Get current admin user details
+func GetAdminUser(c *gin.Context) {
+	var user models.User
+	if err := config.DB.Where("role = ?", "admin").First(&user).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Admin user not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"id": user.ID,
+		"username": user.Username,
+		"email": user.Email,
+		"role": user.Role,
+		"created_at": user.CreatedAt,
+	})
+}
+
+// Update admin credentials
+func UpdateAdminUser(c *gin.Context) {
+	var req struct {
+		Username    string `json:"username"`
+		Email       string `json:"email"`
+		NewPassword string `json:"new_password"`
+	}
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	var user models.User
+	if err := config.DB.Where("role = ?", "admin").First(&user).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Admin user not found"})
+		return
+	}
+
+	// Update fields if provided
+	if req.Username != "" {
+		user.Username = req.Username
+	}
+	if req.Email != "" {
+		user.Email = req.Email
+	}
+	if req.NewPassword != "" {
+		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.NewPassword), bcrypt.DefaultCost)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
+			return
+		}
+		user.Password = string(hashedPassword)
+	}
+
+	if err := config.DB.Save(&user).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update admin user"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Admin user updated successfully",
+		"username": user.Username,
+		"email": user.Email,
 	})
 }
 

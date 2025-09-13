@@ -32,6 +32,10 @@ func RegisterRoutes(r *gin.Engine) {
 		// Dashboard
 		admin.GET("/dashboard", controllers.GetAdminDashboard)
 		
+		// Admin user management
+		admin.GET("/user", controllers.GetAdminUser)
+		admin.PUT("/user", controllers.UpdateAdminUser)
+		
 		// Projects CRUD
 		projectsAdmin := admin.Group("/projects")
 		{
@@ -58,6 +62,15 @@ func RegisterRoutes(r *gin.Engine) {
 			blogsAdmin.POST("", controllers.CreateAdminBlogPost)
 			blogsAdmin.PUT("/:id", controllers.UpdateAdminBlogPost)
 			blogsAdmin.DELETE("/:id", controllers.DeleteAdminBlogPost)
+		}
+		
+		// Contact Messages Management
+		contactsAdmin := admin.Group("/contacts")
+		{
+			contactsAdmin.GET("", controllers.GetAdminContacts)
+			contactsAdmin.GET("/:id", controllers.GetAdminContact)
+			contactsAdmin.PUT("/:id/read", controllers.MarkContactAsRead)
+			contactsAdmin.DELETE("/:id", controllers.DeleteAdminContact)
 		}
 	}
 	

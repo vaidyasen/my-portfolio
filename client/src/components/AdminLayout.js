@@ -10,6 +10,7 @@ const AdminLayout = ({ children }) => {
     { name: "Projects", path: "/admin/projects", icon: "🚀" },
     { name: "Skills", path: "/admin/skills", icon: "⚡" },
     { name: "Blog", path: "/admin/blog", icon: "📝" },
+    { name: "Messages", path: "/admin/contacts", icon: "📧" },
   ];
 
   const handleLogout = () => {

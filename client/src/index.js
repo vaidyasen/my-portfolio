@@ -14,6 +14,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import AdminProjects from "./pages/AdminProjects";
 import AdminSkills from "./pages/AdminSkills";
 import AdminBlog from "./pages/AdminBlog";
+import AdminContacts from "./pages/AdminContacts";
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -62,6 +63,14 @@ const AdminRoutes = () => (
       element={
         <ProtectedRoute>
           <AdminBlog />
+        </ProtectedRoute>
+      }
+    />
+    <Route
+      path="contacts"
+      element={
+        <ProtectedRoute>
+          <AdminContacts />
         </ProtectedRoute>
       }
     />

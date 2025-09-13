@@ -18,7 +18,9 @@ export default function Contact() {
     setSubmitStatus(null);
 
     try {
-      await axios.post(`${API_BASE_URL}/api/contact`, form);
+      // Create a separate axios instance without auth headers for public contact form
+      const publicAxios = axios.create();
+      await publicAxios.post(`${API_BASE_URL}/api/contact`, form);
       setSubmitStatus({
         type: "success",
         message: "Message sent successfully! I'll get back to you soon.",
@@ -39,21 +41,21 @@ export default function Contact() {
   const contactInfo = [
     {
       label: "Email",
-      value: "ritik@example.com",
+      value: "ritikvaidyasen@gmail.com",
       icon: "📧",
-      link: "mailto:ritik@example.com",
+      link: "mailto:ritikvaidyasen@gmail.com",
     },
     {
       label: "LinkedIn",
-      value: "linkedin.com/in/ritikvaidyasen",
+      value: "linkedin.com/in/vaidyasen",
       icon: "💼",
-      link: "https://linkedin.com/in/ritikvaidyasen",
+      link: "https://www.linkedin.com/in/vaidyasen/",
     },
     {
       label: "GitHub",
-      value: "github.com/ritikvaidyasen",
+      value: "github.com/vaidyasen",
       icon: "🐙",
-      link: "https://github.com/ritikvaidyasen",
+      link: "https://github.com/vaidyasen",
     },
   ];
 

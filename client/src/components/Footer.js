@@ -138,11 +138,11 @@ export default function Footer() {
             >
               <p className="text-gray-400">
                 <span className="block font-medium text-white">Email</span>
-                ritik@example.com
+                ritikvaidyasen@gmail.com
               </p>
               <p className="text-gray-400">
                 <span className="block font-medium text-white">Location</span>
-                Your City, Country
+                Bengaluru, India
               </p>
             </motion.div>
           </div>

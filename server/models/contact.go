@@ -9,4 +9,5 @@ type Contact struct {
 	Name    string `json:"name"`
 	Email   string `json:"email"`
 	Message string `json:"message"`
+	Read    bool   `json:"read" gorm:"default:false"`
 }

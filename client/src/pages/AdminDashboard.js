@@ -48,6 +48,14 @@ const AdminDashboard = () => {
       color: "from-purple-500 to-purple-600",
       link: "/admin/blog",
     },
+    {
+      title: "Contact Messages",
+      value: stats.contacts,
+      icon: "📧",
+      color: "from-orange-500 to-orange-600",
+      link: "/admin/contacts",
+      badge: stats.unread_contacts > 0 ? stats.unread_contacts : null,
+    },
   ];
 
   if (loading) {
@@ -84,8 +92,13 @@ const AdminDashboard = () => {
               whileHover={{ y: -5 }}
             >
               <div
-                className={`bg-gradient-to-r ${card.color} rounded-xl p-6 text-white shadow-lg`}
+                className={`bg-gradient-to-r ${card.color} rounded-xl p-6 text-white shadow-lg relative`}
               >
+                {card.badge && (
+                  <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center">
+                    {card.badge}
+                  </div>
+                )}
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-white/80 text-sm font-medium">
@@ -136,6 +149,22 @@ const AdminDashboard = () => {
               <span className="text-2xl">✍️</span>
               <span className="font-medium text-purple-700 dark:text-purple-300">
                 Write Blog
+              </span>
+            </motion.a>
+
+            <motion.a
+              href="/admin/contacts"
+              className="flex items-center space-x-3 p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg hover:bg-orange-100 dark:hover:bg-orange-900/30 transition-colors relative"
+              whileHover={{ scale: 1.02 }}
+            >
+              {stats.unread_contacts > 0 && (
+                <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                  {stats.unread_contacts}
+                </div>
+              )}
+              <span className="text-2xl">📧</span>
+              <span className="font-medium text-orange-700 dark:text-orange-300">
+                View Messages
               </span>
             </motion.a>
 

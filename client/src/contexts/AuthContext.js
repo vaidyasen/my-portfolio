@@ -13,7 +13,11 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem("admin_token"));
+  const [token, setToken] = useState(() => {
+    const savedToken = localStorage.getItem("admin_token");
+    console.log("Initial token from localStorage:", savedToken);
+    return savedToken;
+  });
 
   const login = async (username, password) => {
     try {
@@ -34,7 +38,7 @@ export const AuthProvider = ({ children }) => {
       // Set default auth header for future requests
       axios.defaults.headers.common["Authorization"] = `Bearer ${newToken}`;
 
-      console.log("Login successful!"); // Debug log
+      console.log("Login successful! Token set:", newToken); // Debug log
       return { success: true };
     } catch (error) {
       console.error("Login error:", error); // Debug log
@@ -58,10 +62,25 @@ export const AuthProvider = ({ children }) => {
 
   // Set auth header if token exists
   React.useEffect(() => {
+    console.log("AuthContext useEffect - token:", token);
     if (token) {
+      console.log("Setting auth header with token:", token);
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    } else {
+      console.log("No token found, removing auth header");
+      delete axios.defaults.headers.common["Authorization"];
     }
   }, [token]);
+
+  // Initialize on mount
+  React.useEffect(() => {
+    const savedToken = localStorage.getItem("admin_token");
+    console.log("Checking for saved token on mount:", savedToken);
+    if (savedToken && !token) {
+      console.log("Setting token from localStorage:", savedToken);
+      setToken(savedToken);
+    }
+  }, []);
 
   const value = {
     user,

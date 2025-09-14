@@ -19,8 +19,8 @@ func GetSkills(c *gin.Context) {
 		query = query.Where("category = ?", category)
 	}
 
-	// Get skills from database, ordered by level desc and name asc
-	if err := query.Order("level DESC, name ASC").Find(&skills).Error; err != nil {
+	// Get skills from database, ordered by name asc
+	if err := query.Order("name ASC").Find(&skills).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "Failed to fetch skills",
 		})

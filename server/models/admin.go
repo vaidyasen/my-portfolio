@@ -33,7 +33,6 @@ type Skill struct {
 	ID          uint      `json:"id" gorm:"primaryKey"`
 	Name        string    `json:"name" gorm:"unique;not null"`
 	Category    string    `json:"category"`
-	Level       int       `json:"level" gorm:"default:1"` // 1-100
 	Description string    `json:"description"`
 	Icon        string    `json:"icon"`
 	CreatedAt   time.Time `json:"created_at"`

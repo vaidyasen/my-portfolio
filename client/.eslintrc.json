@@ -1,0 +1,4 @@
+{
+  "extends": ["react-app", "react-app/jest"],
+  "ignorePatterns": ["coverage/", "build/", "node_modules/"]
+}

@@ -1,6 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
+import PropTypes from "prop-types";
 import ErrorBoundary from "../components/ErrorBoundary";
 
 // Test component that throws an error
@@ -11,10 +12,20 @@ const ThrowError = ({ shouldThrow }) => {
   return <div>No error</div>;
 };
 
+ThrowError.propTypes = {
+  shouldThrow: PropTypes.bool,
+};
+
 // Custom fallback component for testing
 const CustomFallback = ({ error }) => (
   <div data-testid="custom-fallback">Custom error: {error?.message}</div>
 );
+
+CustomFallback.propTypes = {
+  error: PropTypes.shape({
+    message: PropTypes.string,
+  }),
+};
 
 // Mock console.error to avoid noise in test output
 const originalError = console.error;
@@ -177,6 +188,13 @@ describe("ErrorBoundary", () => {
         Stack: {error?.stack ? "present" : "absent"}
       </div>
     );
+
+    TestFallback.propTypes = {
+      error: PropTypes.shape({
+        message: PropTypes.string,
+        stack: PropTypes.string,
+      }),
+    };
 
     render(
       <ErrorBoundary fallback={TestFallback}>

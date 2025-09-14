@@ -9,6 +9,11 @@ import (
 	"gorm.io/gorm"
 )
 
+const (
+	updatedTitleConst = "Updated Title"
+	notFoundErrorMsg  = "not found"
+)
+
 func setupTestProjectService() *ProjectService {
 	// Create an in-memory SQLite database for testing
 	db, _ := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
@@ -19,7 +24,7 @@ func setupTestProjectService() *ProjectService {
 	return &ProjectService{db: db}
 }
 
-func TestProjectService_GetProjects(t *testing.T) {
+func TestProjectServiceGetProjects(t *testing.T) {
 	service := setupTestProjectService()
 
 	// Create test data
@@ -58,7 +63,7 @@ func TestProjectService_GetProjects(t *testing.T) {
 	})
 }
 
-func TestProjectService_GetProjectByID(t *testing.T) {
+func TestProjectServiceGetProjectByID(t *testing.T) {
 	service := setupTestProjectService()
 
 	// Create test project
@@ -83,11 +88,11 @@ func TestProjectService_GetProjectByID(t *testing.T) {
 		
 		assert.Error(t, err)
 		assert.Nil(t, result)
-		assert.Contains(t, err.Error(), "not found")
+		assert.Contains(t, err.Error(), notFoundErrorMsg)
 	})
 }
 
-func TestProjectService_CreateProject(t *testing.T) {
+func TestProjectServiceCreateProject(t *testing.T) {
 	service := setupTestProjectService()
 
 	t.Run("Create valid project", func(t *testing.T) {
@@ -125,7 +130,7 @@ func TestProjectService_CreateProject(t *testing.T) {
 	})
 }
 
-func TestProjectService_UpdateProject(t *testing.T) {
+func TestProjectServiceUpdateProject(t *testing.T) {
 	service := setupTestProjectService()
 
 	// Create initial project
@@ -138,36 +143,38 @@ func TestProjectService_UpdateProject(t *testing.T) {
 
 	t.Run("Update existing project", func(t *testing.T) {
 		updates := &models.Project{
-			Title:       "Updated Title",
+			ID:          project.ID,
+			Title:       updatedTitleConst,
 			Description: "Updated Description",
 			Featured:    true,
 		}
 
-		err := service.UpdateProject(project.ID, updates)
+		err := service.UpdateProject(updates)
 		
 		assert.NoError(t, err)
 		
 		// Verify update
 		var updated models.Project
 		service.db.First(&updated, project.ID)
-		assert.Equal(t, "Updated Title", updated.Title)
+		assert.Equal(t, updatedTitleConst, updated.Title)
 		assert.Equal(t, "Updated Description", updated.Description)
 		assert.True(t, updated.Featured)
 	})
 
 	t.Run("Update non-existing project", func(t *testing.T) {
 		updates := &models.Project{
-			Title: "Updated Title",
+			ID:    9999, // Non-existing ID
+			Title: updatedTitleConst,
 		}
 
-		err := service.UpdateProject(9999, updates)
+		err := service.UpdateProject(updates)
 		
 		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "not found")
+		assert.Contains(t, err.Error(), notFoundErrorMsg)
 	})
 }
 
-func TestProjectService_DeleteProject(t *testing.T) {
+func TestProjectServiceDeleteProject(t *testing.T) {
 	service := setupTestProjectService()
 
 	// Create test project
@@ -193,6 +200,6 @@ func TestProjectService_DeleteProject(t *testing.T) {
 		err := service.DeleteProject(9999)
 		
 		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "not found")
+		assert.Contains(t, err.Error(), notFoundErrorMsg)
 	})
 }

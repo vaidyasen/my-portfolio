@@ -180,10 +180,14 @@ const AdminSkills = () => {
         <div className="bg-white rounded-lg shadow-md p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="search-skills"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Search Skills
               </label>
               <input
+                id="search-skills"
                 type="text"
                 placeholder="Search by name or description..."
                 value={searchTerm}
@@ -192,10 +196,14 @@ const AdminSkills = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="category-filter"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Filter by Category
               </label>
               <select
+                id="category-filter"
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900"
@@ -312,10 +320,14 @@ const AdminSkills = () => {
                 </h2>
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label
+                      htmlFor="skill-name"
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                    >
                       Skill Name *
                     </label>
                     <input
+                      id="skill-name"
                       type="text"
                       required
                       value={formData.name}
@@ -328,10 +340,14 @@ const AdminSkills = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label
+                      htmlFor="skill-category"
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                    >
                       Category *
                     </label>
                     <select
+                      id="skill-category"
                       required
                       value={formData.category}
                       onChange={(e) =>
@@ -349,10 +365,14 @@ const AdminSkills = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label
+                      htmlFor="skill-icon"
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                    >
                       Icon (Emoji)
                     </label>
                     <input
+                      id="skill-icon"
                       type="text"
                       value={formData.icon}
                       onChange={(e) =>
@@ -364,10 +384,14 @@ const AdminSkills = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label
+                      htmlFor="skill-description"
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                    >
                       Description
                     </label>
                     <textarea
+                      id="skill-description"
                       value={formData.description}
                       onChange={(e) =>
                         setFormData({

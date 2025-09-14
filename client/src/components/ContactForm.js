@@ -1,14 +1,10 @@
 /**
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import PropTypes from 'prop-types';
-import { schemas } from '../utils/validation';
-import { useAsyncOperation } from '../hooks/useApiData';
-import { LoadingSpinner } from './Loading';ntact form component with proper validation and error handling
+ * Contact form component with proper validation and error handling
  * Follows Single Responsibility and Interface Segregation principles
  */
 import React, { useState } from "react";
 import { motion } from "framer-motion";
+import PropTypes from "prop-types";
 import { schemas } from "../utils/validation";
 import { useAsyncOperation } from "../hooks/useApiData";
 import { LoadingSpinner } from "./Loading";

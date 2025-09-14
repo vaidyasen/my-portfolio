@@ -27,6 +27,7 @@ func RegisterRoutes(r *gin.Engine) {
 		auth.POST("/migrate-projects", controllers.MigrateExistingProjects) // One-time migration
 		auth.POST("/update-projects", controllers.UpdateProjectsFromGitHub) // Update projects with GitHub data
 		auth.POST("/real-projects", controllers.UpdateWithRealGitHubProjects) // Update with real GitHub projects
+		auth.POST("/seed-skills", controllers.SeedSkills) // Seed initial skills data
 	}
 	
 	// Admin routes - protected by JWT and admin role

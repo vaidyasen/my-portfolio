@@ -475,3 +475,91 @@ func UpdateProjectsFromGitHub(c *gin.Context) {
 		"count":   len(updatedProjects),
 	})
 }
+
+// SeedSkills seeds initial skills data
+func SeedSkills(c *gin.Context) {
+	// Check if skills already exist
+	var count int64
+	config.DB.Model(&models.Skill{}).Count(&count)
+	if count > 0 {
+		c.JSON(http.StatusOK, gin.H{
+			"message": "Skills already exist",
+			"count":   count,
+		})
+		return
+	}
+
+	initialSkills := []models.Skill{
+		{
+			Name:        "React",
+			Category:    "Frontend",
+			Description: "Modern React with hooks, context, and advanced patterns",
+			Icon:        "⚛️",
+		},
+		{
+			Name:        "JavaScript",
+			Category:    "Frontend",
+			Description: "ES6+, async/await, modern JavaScript features",
+			Icon:        "🟨",
+		},
+		{
+			Name:        "TypeScript",
+			Category:    "Frontend",
+			Description: "Static typing for JavaScript applications",
+			Icon:        "🔵",
+		},
+		{
+			Name:        "Go",
+			Category:    "Backend",
+			Description: "Concurrent programming with Go",
+			Icon:        "🐹",
+		},
+		{
+			Name:        "Node.js",
+			Category:    "Backend",
+			Description: "Server-side JavaScript runtime",
+			Icon:        "🟢",
+		},
+		{
+			Name:        "PostgreSQL",
+			Category:    "Database",
+			Description: "Relational database management",
+			Icon:        "🐘",
+		},
+		{
+			Name:        "MongoDB",
+			Category:    "Database",
+			Description: "NoSQL document database",
+			Icon:        "🍃",
+		},
+		{
+			Name:        "Docker",
+			Category:    "DevOps",
+			Description: "Containerization and deployment",
+			Icon:        "🐳",
+		},
+		{
+			Name:        "AWS",
+			Category:    "DevOps",
+			Description: "Cloud computing services",
+			Icon:        "☁️",
+		},
+		{
+			Name:        "Git",
+			Category:    "Tools",
+			Description: "Version control and collaboration",
+			Icon:        "📚",
+		},
+	}
+
+	result := config.DB.Create(&initialSkills)
+	if result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to seed skills"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Skills seeded successfully",
+		"count":   len(initialSkills),
+	})
+}

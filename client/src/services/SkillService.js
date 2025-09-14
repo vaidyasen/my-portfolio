@@ -17,6 +17,23 @@ export class SkillService {
     return await ApiService.get(endpoint);
   }
 
+  async getAdminSkills(filters = {}) {
+    const queryParams = new URLSearchParams();
+
+    if (filters.search) {
+      queryParams.append("search", filters.search);
+    }
+
+    if (filters.category) {
+      queryParams.append("category", filters.category);
+    }
+
+    const endpoint = `/admin/skills${
+      queryParams.toString() ? "?" + queryParams.toString() : ""
+    }`;
+    return await ApiService.get(endpoint);
+  }
+
   async createSkill(skillData) {
     return await ApiService.post("/admin/skills", skillData);
   }

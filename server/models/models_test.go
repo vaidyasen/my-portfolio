@@ -104,7 +104,6 @@ func TestSkillModel(t *testing.T) {
 		skill := Skill{
 			Name:        "Go Programming",
 			Category:    "Backend",
-			Level:       85,
 			Description: "Experienced in Go development",
 			Icon:        "golang-icon",
 		}
@@ -113,7 +112,7 @@ func TestSkillModel(t *testing.T) {
 		assert.NoError(t, result.Error)
 		assert.NotZero(t, skill.ID)
 		assert.Equal(t, "Go Programming", skill.Name)
-		assert.Equal(t, 85, skill.Level)
+		assert.Equal(t, "Backend", skill.Category)
 	})
 	
 	t.Run("Unique Skill Name", func(t *testing.T) {
@@ -121,7 +120,6 @@ func TestSkillModel(t *testing.T) {
 		skill1 := Skill{
 			Name:     "JavaScript",
 			Category: "Frontend",
-			Level:    80,
 		}
 		db.Create(&skill1)
 		
@@ -129,7 +127,6 @@ func TestSkillModel(t *testing.T) {
 		skill2 := Skill{
 			Name:     "JavaScript", // Same name
 			Category: "Backend",
-			Level:    70,
 		}
 		
 		result := db.Create(&skill2)

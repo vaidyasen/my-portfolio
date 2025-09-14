@@ -68,6 +68,9 @@ export const generateId = () => {
  * @param {Object} obj
  */
 export const deepClone = (obj) => {
+  if (obj === null || obj === undefined) {
+    return obj;
+  }
   return JSON.parse(JSON.stringify(obj));
 };
 

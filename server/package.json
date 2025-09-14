@@ -5,7 +5,11 @@
   "scripts": {
     "dev": "nodemon --exec 'go run main.go' --ext go --signal SIGTERM",
     "start": "go run main.go",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "go test -v ./...",
+    "test:coverage": "go test -v -cover ./...",
+    "test:race": "go test -v -race ./...",
+    "build": "go build -o portfolio-server main.go",
+    "clean": "go clean"
   },
   "keywords": [],
   "author": "",

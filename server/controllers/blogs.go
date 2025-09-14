@@ -9,6 +9,54 @@ import (
 	"github.com/ritikvaidyasen/portfolio-server/models"
 )
 
+// Public endpoint for getting published blog posts
+func GetBlogs(c *gin.Context) {
+	var blogs []models.BlogPost
+	query := config.DB.Where("published = ?", true)
+
+	// Pagination for public endpoint
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
+	offset := (page - 1) * limit
+
+	var total int64
+	query.Model(&models.BlogPost{}).Count(&total)
+
+	// Get published blog posts, ordered by published_at desc
+	if err := query.Offset(offset).Limit(limit).Order("published_at DESC").Find(&blogs).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to fetch blog posts",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"blogs": blogs,
+		"pagination": gin.H{
+			"total":       total,
+			"page":        page,
+			"limit":       limit,
+			"total_pages": (total + int64(limit) - 1) / int64(limit),
+		},
+	})
+}
+
+// Public endpoint for getting a single blog post by slug
+func GetBlogBySlug(c *gin.Context) {
+	slug := c.Param("slug")
+	var blog models.BlogPost
+
+	if err := config.DB.Where("slug = ? AND published = ?", slug, true).First(&blog).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Blog post not found"})
+		return
+	}
+
+	// Increment view count
+	config.DB.Model(&blog).Update("view_count", blog.ViewCount+1)
+
+	c.JSON(http.StatusOK, gin.H{"blog": blog})
+}
+
 func GetAdminBlogPosts(c *gin.Context) {
 	var blogs []models.BlogPost
 	query := config.DB

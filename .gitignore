@@ -5,6 +5,11 @@ node_modules/
 # Production builds
 build/
 dist/
+client/build/
+
+# Generated CSS files
+src/output.css
+client/src/output.css
 
 # Environment variables
 .env
@@ -45,6 +50,10 @@ lerna-debug.log*
 *.test
 *.out
 go.work
+
+# Go binaries
+portfolio-server
+server/portfolio-server
 
 # Database files
 *.db

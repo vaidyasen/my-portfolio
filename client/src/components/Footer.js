@@ -14,16 +14,6 @@ export default function Footer() {
       url: "https://linkedin.com/in/ritikvaidyasen",
       icon: "💼",
     },
-    {
-      name: "Twitter",
-      url: "https://twitter.com/ritikvaidyasen",
-      icon: "🐦",
-    },
-    {
-      name: "Email",
-      url: "mailto:ritik@example.com",
-      icon: "📧",
-    },
   ];
 
   const quickLinks = [
@@ -34,7 +24,7 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="bg-gray-900 dark:bg-black text-white">
+    <footer className="bg-gray-900 dark:bg-black text-white relative">
       <div className="max-w-7xl mx-auto px-4 py-12">
         <div className="grid md:grid-cols-4 gap-8">
           {/* Brand Section */}
@@ -173,7 +163,7 @@ export default function Footer() {
       </div>
 
       {/* Background Pattern */}
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-30"></div>
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-30"></div>
     </footer>
   );
 }

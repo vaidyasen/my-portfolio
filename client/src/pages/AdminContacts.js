@@ -138,59 +138,55 @@ const AdminContacts = () => {
         className="space-y-6"
       >
         {/* Header */}
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+        <div className="flex justify-between items-start mb-6">
+          <div className="flex-1">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
               Contact Messages
             </h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-2">
-              Manage contact form submissions
-            </p>
+            <p className="text-gray-600">Manage contact form submissions</p>
           </div>
-          <div className="text-sm text-gray-500 dark:text-gray-400">
+          <div className="text-sm text-gray-500 flex-shrink-0 ml-4">
             Total: {pagination.total} messages
           </div>
         </div>
 
         {/* Contact Messages List */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+        <div className="bg-white rounded-lg shadow overflow-hidden">
           {contacts.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-gray-500 dark:text-gray-400">
-                No contact messages yet
-              </p>
+              <p className="text-gray-500">No contact messages yet</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50 dark:bg-gray-700">
+                <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Status
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Name
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Email
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Message Preview
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Date
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                <tbody className="bg-white divide-y divide-gray-200">
                   {contacts.map((contact) => (
                     <tr
                       key={contact.ID}
-                      className={`hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer ${
-                        !contact.read ? "bg-blue-50 dark:bg-blue-900/20" : ""
+                      className={`hover:bg-gray-50:bg-gray-700 cursor-pointer ${
+                        !contact.read ? "bg-blue-50/20" : ""
                       }`}
                       onClick={() => openContactModal(contact)}
                     >
@@ -198,29 +194,27 @@ const AdminContacts = () => {
                         <span
                           className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                             contact.read
-                              ? "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300"
-                              : "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300"
+                              ? "bg-gray-100 text-gray-800"
+                              : "bg-blue-100 text-blue-800"
                           }`}
                         >
                           {contact.read ? "Read" : "Unread"}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="font-medium text-gray-900 dark:text-white">
+                        <div className="font-medium text-gray-900">
                           {contact.name}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-gray-900 dark:text-white">
-                          {contact.email}
-                        </div>
+                        <div className="text-gray-900">{contact.email}</div>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="text-gray-900 dark:text-white truncate max-w-xs">
+                        <div className="text-gray-900 truncate max-w-xs">
                           {contact.message}
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {formatDate(contact.CreatedAt)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -229,7 +223,7 @@ const AdminContacts = () => {
                             e.stopPropagation();
                             markAsRead(contact.ID, !contact.read);
                           }}
-                          className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 mr-4"
+                          className="text-blue-600 hover:text-blue-900:text-blue-300 mr-4"
                         >
                           {contact.read ? "Mark Unread" : "Mark Read"}
                         </button>
@@ -238,7 +232,7 @@ const AdminContacts = () => {
                             e.stopPropagation();
                             deleteContact(contact.ID);
                           }}
-                          className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
+                          className="text-red-600 hover:text-red-900:text-red-300"
                         >
                           Delete
                         </button>
@@ -254,21 +248,21 @@ const AdminContacts = () => {
         {/* Pagination */}
         {pagination.pages > 1 && (
           <div className="flex justify-between items-center">
-            <div className="text-sm text-gray-700 dark:text-gray-300">
+            <div className="text-sm text-gray-700">
               Showing page {pagination.page} of {pagination.pages}
             </div>
             <div className="flex space-x-2">
               <button
                 onClick={prevPage}
                 disabled={pagination.page === 1}
-                className="px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300"
+                className="px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Previous
               </button>
               <button
                 onClick={nextPage}
                 disabled={pagination.page === pagination.pages}
-                className="px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300"
+                className="px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Next
               </button>
@@ -283,16 +277,16 @@ const AdminContacts = () => {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] overflow-y-auto"
+            className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] overflow-y-auto"
           >
             <div className="p-6">
               <div className="flex justify-between items-start mb-4">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                <h2 className="text-2xl font-bold text-gray-900">
                   Contact Message
                 </h2>
                 <button
                   onClick={() => setShowContactModal(false)}
-                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                  className="text-gray-400 hover:text-gray-600:text-gray-300"
                 >
                   <svg
                     className="w-6 h-6"
@@ -312,22 +306,20 @@ const AdminContacts = () => {
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
                     Name
                   </label>
-                  <p className="text-gray-900 dark:text-white">
-                    {selectedContact.name}
-                  </p>
+                  <p className="text-gray-900">{selectedContact.name}</p>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
                     Email
                   </label>
-                  <p className="text-gray-900 dark:text-white">
+                  <p className="text-gray-900">
                     <a
                       href={`mailto:${selectedContact.email}`}
-                      className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+                      className="text-blue-600 hover:text-blue-800:text-blue-300"
                     >
                       {selectedContact.email}
                     </a>
@@ -335,20 +327,20 @@ const AdminContacts = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
                     Date Received
                   </label>
-                  <p className="text-gray-900 dark:text-white">
+                  <p className="text-gray-900">
                     {formatDate(selectedContact.CreatedAt)}
                   </p>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
                     Message
                   </label>
-                  <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-                    <p className="text-gray-900 dark:text-white whitespace-pre-wrap">
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <p className="text-gray-900 whitespace-pre-wrap">
                       {selectedContact.message}
                     </p>
                   </div>
@@ -360,7 +352,7 @@ const AdminContacts = () => {
                   onClick={() =>
                     markAsRead(selectedContact.ID, !selectedContact.read)
                   }
-                  className="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-100 rounded-md hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-300 dark:hover:bg-blue-800"
+                  className="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-100 rounded-md hover:bg-blue-200:bg-blue-800"
                 >
                   {selectedContact.read ? "Mark as Unread" : "Mark as Read"}
                 </button>
@@ -369,13 +361,13 @@ const AdminContacts = () => {
                     deleteContact(selectedContact.ID);
                     setShowContactModal(false);
                   }}
-                  className="px-4 py-2 text-sm font-medium text-red-600 bg-red-100 rounded-md hover:bg-red-200 dark:bg-red-900 dark:text-red-300 dark:hover:bg-red-800"
+                  className="px-4 py-2 text-sm font-medium text-red-600 bg-red-100 rounded-md hover:bg-red-200:bg-red-800"
                 >
                   Delete
                 </button>
                 <button
                   onClick={() => setShowContactModal(false)}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200:bg-gray-600"
                 >
                   Close
                 </button>

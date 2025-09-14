@@ -1,5 +1,12 @@
-import React, { useState, useContext, createContext } from "react";
-import axios from "axios";
+import React, {
+  useState,
+  useContext,
+  createContext,
+  useEffect,
+  useMemo,
+} from "react";
+import PropTypes from "prop-types";
+import AuthService from "../services/AuthService";
 
 const AuthContext = createContext();
 
@@ -14,81 +21,54 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(() => {
-    const savedToken = localStorage.getItem("admin_token");
-    console.log("Initial token from localStorage:", savedToken);
-    return savedToken;
+    return AuthService.getToken();
   });
 
   const login = async (username, password) => {
-    try {
-      console.log("Attempting login with:", { username, password }); // Debug log
-      const response = await axios.post("/auth/login", {
-        username,
-        password,
-      });
+    const result = await AuthService.login(username, password);
 
-      console.log("Login response:", response.data); // Debug log
-
-      const { token: newToken, user: userData } = response.data;
-
-      setToken(newToken);
-      setUser(userData);
-      localStorage.setItem("admin_token", newToken);
-
-      // Set default auth header for future requests
-      axios.defaults.headers.common["Authorization"] = `Bearer ${newToken}`;
-
-      console.log("Login successful! Token set:", newToken); // Debug log
+    if (result.success) {
+      setToken(result.token);
+      setUser(result.user);
       return { success: true };
-    } catch (error) {
-      console.error("Login error:", error); // Debug log
-      return {
-        success: false,
-        error: error.response?.data?.error || "Login failed",
-      };
     }
+
+    return result;
   };
 
-  const logout = () => {
+  const logout = async () => {
+    const result = await AuthService.logout();
     setToken(null);
     setUser(null);
-    localStorage.removeItem("admin_token");
-    delete axios.defaults.headers.common["Authorization"];
+    return result;
   };
 
   const isAuthenticated = () => {
-    return !!token;
+    return AuthService.isAuthenticated();
   };
 
-  // Set auth header if token exists
-  React.useEffect(() => {
-    console.log("AuthContext useEffect - token:", token);
-    if (token) {
-      console.log("Setting auth header with token:", token);
-      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-    } else {
-      console.log("No token found, removing auth header");
-      delete axios.defaults.headers.common["Authorization"];
+  // Initialize on mount
+  useEffect(() => {
+    const savedToken = AuthService.getToken();
+    if (savedToken && !token) {
+      setToken(savedToken);
     }
   }, [token]);
 
-  // Initialize on mount
-  React.useEffect(() => {
-    const savedToken = localStorage.getItem("admin_token");
-    console.log("Checking for saved token on mount:", savedToken);
-    if (savedToken && !token) {
-      console.log("Setting token from localStorage:", savedToken);
-      setToken(savedToken);
-    }
-  }, []);
-
-  const value = {
-    user,
-    token,
-    login,
-    logout,
-    isAuthenticated,
-  };
+  const value = useMemo(
+    () => ({
+      user,
+      token,
+      login,
+      logout,
+      isAuthenticated,
+    }),
+    [user, token, login, logout, isAuthenticated]
+  );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+};
+
+AuthProvider.propTypes = {
+  children: PropTypes.node.isRequired,
 };

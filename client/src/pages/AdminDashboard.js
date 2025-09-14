@@ -2,8 +2,12 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import axios from "axios";
 import AdminLayout from "../components/AdminLayout";
+import { useAuth } from "../contexts/AuthContext";
+
+const API_BASE_URL = process.env.REACT_APP_API_URL || "";
 
 const AdminDashboard = () => {
+  const { token } = useAuth();
   const [stats, setStats] = useState({
     projects: 0,
     skills: 0,
@@ -11,13 +15,23 @@ const AdminDashboard = () => {
   });
   const [loading, setLoading] = useState(true);
 
+  const getAuthHeaders = () => ({
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+
   useEffect(() => {
     fetchStats();
   }, []);
 
   const fetchStats = async () => {
     try {
-      const response = await axios.get("/admin/dashboard");
+      const response = await axios.get(
+        `${API_BASE_URL}/admin/dashboard`,
+        getAuthHeaders()
+      );
       setStats(response.data.stats);
     } catch (error) {
       console.error("Error fetching stats:", error);
@@ -54,7 +68,6 @@ const AdminDashboard = () => {
       icon: "📧",
       color: "from-orange-500 to-orange-600",
       link: "/admin/contacts",
-      badge: stats.unread_contacts > 0 ? stats.unread_contacts : null,
     },
   ];
 
@@ -72,11 +85,25 @@ const AdminDashboard = () => {
     <AdminLayout>
       <div className="space-y-8">
         {/* Header */}
-        <div>
-          <h1 className="text-3xl font-bold gradient-text mb-2">Dashboard</h1>
-          <p className="text-gray-600 dark:text-gray-400">
-            Welcome to your portfolio administration panel
-          </p>
+        <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="text-4xl font-bold text-black mb-3">Dashboard</h1>
+              <p className="text-black text-xl font-medium">
+                Welcome to your portfolio administration panel
+              </p>
+            </div>
+            <motion.a
+              href="/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center space-x-3 p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors border-2 border-gray-300"
+              whileHover={{ scale: 1.02 }}
+            >
+              <span className="text-2xl">👁️</span>
+              <span className="font-bold text-black text-lg">View Site</span>
+            </motion.a>
+          </div>
         </div>
 
         {/* Stats Cards */}
@@ -92,19 +119,16 @@ const AdminDashboard = () => {
               whileHover={{ y: -5 }}
             >
               <div
-                className={`bg-gradient-to-r ${card.color} rounded-xl p-6 text-white shadow-lg relative`}
+                className={`bg-gradient-to-r ${card.color} rounded-xl p-6 text-black shadow-lg`}
               >
-                {card.badge && (
-                  <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center">
-                    {card.badge}
-                  </div>
-                )}
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-white/80 text-sm font-medium">
+                    <p className="text-black/80 text-sm font-medium">
                       {card.title}
                     </p>
-                    <p className="text-3xl font-bold">{card.value}</p>
+                    <p className="text-3xl font-bold text-black">
+                      {card.value}
+                    </p>
                   </div>
                   <div className="text-4xl opacity-80">{card.icon}</div>
                 </div>
@@ -113,114 +137,38 @@ const AdminDashboard = () => {
           ))}
         </div>
 
-        {/* Quick Actions */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-          <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">
-            Quick Actions
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <motion.a
-              href="/admin/projects"
-              className="flex items-center space-x-3 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
-              whileHover={{ scale: 1.02 }}
-            >
-              <span className="text-2xl">➕</span>
-              <span className="font-medium text-blue-700 dark:text-blue-300">
-                Add Project
-              </span>
-            </motion.a>
-
-            <motion.a
-              href="/admin/skills"
-              className="flex items-center space-x-3 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg hover:bg-green-100 dark:hover:bg-green-900/30 transition-colors"
-              whileHover={{ scale: 1.02 }}
-            >
-              <span className="text-2xl">🎯</span>
-              <span className="font-medium text-green-700 dark:text-green-300">
-                Manage Skills
-              </span>
-            </motion.a>
-
-            <motion.a
-              href="/admin/blog"
-              className="flex items-center space-x-3 p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors"
-              whileHover={{ scale: 1.02 }}
-            >
-              <span className="text-2xl">✍️</span>
-              <span className="font-medium text-purple-700 dark:text-purple-300">
-                Write Blog
-              </span>
-            </motion.a>
-
-            <motion.a
-              href="/admin/contacts"
-              className="flex items-center space-x-3 p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg hover:bg-orange-100 dark:hover:bg-orange-900/30 transition-colors relative"
-              whileHover={{ scale: 1.02 }}
-            >
-              {stats.unread_contacts > 0 && (
-                <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                  {stats.unread_contacts}
-                </div>
-              )}
-              <span className="text-2xl">📧</span>
-              <span className="font-medium text-orange-700 dark:text-orange-300">
-                View Messages
-              </span>
-            </motion.a>
-
-            <motion.a
-              href="/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center space-x-3 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
-              whileHover={{ scale: 1.02 }}
-            >
-              <span className="text-2xl">👁️</span>
-              <span className="font-medium text-gray-700 dark:text-gray-300">
-                View Site
-              </span>
-            </motion.a>
-          </div>
-        </div>
-
-        {/* Recent Activity */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-          <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">
-            System Status
-          </h2>
-          <div className="space-y-3">
-            <div className="flex items-center justify-between p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
+        {/* System Status */}
+        <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
+          <h2 className="text-3xl font-bold mb-6 text-black">System Status</h2>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg border-2 border-green-300">
               <div className="flex items-center space-x-3">
-                <span className="w-3 h-3 bg-green-500 rounded-full"></span>
-                <span className="text-green-700 dark:text-green-300 font-medium">
-                  API Server
-                </span>
+                <span className="w-5 h-5 bg-green-500 rounded-full animate-pulse"></span>
+                <span className="text-black font-bold text-xl">API Server</span>
               </div>
-              <span className="text-green-600 dark:text-green-400 text-sm">
+              <span className="text-green-800 font-bold bg-green-200 px-4 py-2 rounded-full text-lg">
                 Running
               </span>
             </div>
 
-            <div className="flex items-center justify-between p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
+            <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg border-2 border-green-300">
               <div className="flex items-center space-x-3">
-                <span className="w-3 h-3 bg-green-500 rounded-full"></span>
-                <span className="text-green-700 dark:text-green-300 font-medium">
-                  Database
-                </span>
+                <span className="w-5 h-5 bg-green-500 rounded-full"></span>
+                <span className="text-black font-bold text-xl">Database</span>
               </div>
-              <span className="text-green-600 dark:text-green-400 text-sm">
+              <span className="text-green-800 font-bold bg-green-200 px-4 py-2 rounded-full text-lg">
                 Connected
               </span>
             </div>
 
-            <div className="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+            <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg border-2 border-blue-300">
               <div className="flex items-center space-x-3">
-                <span className="w-3 h-3 bg-blue-500 rounded-full"></span>
-                <span className="text-blue-700 dark:text-blue-300 font-medium">
+                <span className="w-5 h-5 bg-blue-500 rounded-full"></span>
+                <span className="text-black font-bold text-xl">
                   Last Backup
                 </span>
               </div>
-              <span className="text-blue-600 dark:text-blue-400 text-sm">
+              <span className="text-blue-800 font-bold bg-blue-200 px-4 py-2 rounded-full text-lg">
                 Today
               </span>
             </div>

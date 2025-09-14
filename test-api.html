@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio API Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .api-result {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 10px 0;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .success {
+            border-left: 4px solid #28a745;
+        }
+
+        .error {
+            border-left: 4px solid #dc3545;
+        }
+
+        .info {
+            border-left: 4px solid #17a2b8;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .project-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            background: #fff;
+        }
+
+        .tech-tag {
+            display: inline-block;
+            background: #e9ecef;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            margin: 2px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🔧 Portfolio Database API Test</h1>
+        <p>This page tests the API endpoints to verify the database integration is working.</p>
+
+        <div>
+            <button onclick="testProjects()">🚀 Test Projects API</button>
+            <button onclick="testSkills()">🛠️ Test Skills API</button>
+            <button onclick="testBlogs()">📝 Test Blogs API</button>
+            <button onclick="testHealth()">❤️ Test Health Check</button>
+            <button onclick="clearResults()">🧹 Clear Results</button>
+        </div>
+    </div>
+
+    <div id="results"></div>
+
+    <script>
+        const API_BASE = 'http://localhost:8080';
+
+        function addResult(title, data, type = 'info') {
+            const resultsDiv = document.getElementById('results');
+            const container = document.createElement('div');
+            container.className = 'container';
+
+            const titleEl = document.createElement('h3');
+            titleEl.textContent = title;
+            container.appendChild(titleEl);
+
+            const resultDiv = document.createElement('div');
+            resultDiv.className = `api-result ${type}`;
+            resultDiv.textContent = typeof data === 'object' ? JSON.stringify(data, null, 2) : data;
+            container.appendChild(resultDiv);
+
+            resultsDiv.appendChild(container);
+            container.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function clearResults() {
+            document.getElementById('results').innerHTML = '';
+        }
+
+        async function testProjects() {
+            try {
+                addResult('📡 Testing Projects API...', 'Fetching projects from /api/projects', 'info');
+
+                const response = await fetch(`${API_BASE}/api/projects`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    addResult('✅ Projects API Success', {
+                        status: response.status,
+                        count: data.count,
+                        projects: data.projects.length,
+                        sample_project: data.projects[0] || 'No projects found'
+                    }, 'success');
+
+                    // Display projects nicely
+                    if (data.projects && data.projects.length > 0) {
+                        data.projects.forEach((project, index) => {
+                            const projectHtml = document.createElement('div');
+                            projectHtml.className = 'project-card';
+                            projectHtml.innerHTML = `
+                                <h4>${project.title}</h4>
+                                <p><strong>Status:</strong> ${project.status} ${project.featured ? '⭐ Featured' : ''}</p>
+                                <p><strong>Category:</strong> ${project.category}</p>
+                                <p><strong>Description:</strong> ${project.description}</p>
+                                <div><strong>Technologies:</strong><br>
+                                    ${project.technologies.map(tech => `<span class="tech-tag">${tech}</span>`).join('')}
+                                </div>
+                                <p><strong>Links:</strong> 
+                                    ${project.github ? `<a href="${project.github}" target="_blank">GitHub</a>` : ''}
+                                    ${project.live ? `<a href="${project.live}" target="_blank">Live Demo</a>` : ''}
+                                </p>
+                            `;
+                            document.getElementById('results').appendChild(projectHtml);
+                        });
+                    }
+                } else {
+                    addResult('❌ Projects API Error', { status: response.status, error: data }, 'error');
+                }
+            } catch (error) {
+                addResult('❌ Projects API Network Error', error.message, 'error');
+            }
+        }
+
+        async function testSkills() {
+            try {
+                addResult('📡 Testing Skills API...', 'Fetching skills from /api/skills', 'info');
+
+                const response = await fetch(`${API_BASE}/api/skills`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    addResult('✅ Skills API Success', {
+                        status: response.status,
+                        count: data.count,
+                        skills: data.skills
+                    }, 'success');
+                } else {
+                    addResult('❌ Skills API Error', { status: response.status, error: data }, 'error');
+                }
+            } catch (error) {
+                addResult('❌ Skills API Network Error', error.message, 'error');
+            }
+        }
+
+        async function testBlogs() {
+            try {
+                addResult('📡 Testing Blogs API...', 'Fetching blogs from /api/blogs', 'info');
+
+                const response = await fetch(`${API_BASE}/api/blogs`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    addResult('✅ Blogs API Success', {
+                        status: response.status,
+                        blogs_count: data.blogs.length,
+                        pagination: data.pagination,
+                        blogs: data.blogs
+                    }, 'success');
+                } else {
+                    addResult('❌ Blogs API Error', { status: response.status, error: data }, 'error');
+                }
+            } catch (error) {
+                addResult('❌ Blogs API Network Error', error.message, 'error');
+            }
+        }
+
+        async function testHealth() {
+            try {
+                addResult('📡 Testing Health Check...', 'Fetching from /health', 'info');
+
+                const response = await fetch(`${API_BASE}/health`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    addResult('✅ Health Check Success', { status: response.status, data }, 'success');
+                } else {
+                    addResult('❌ Health Check Error', { status: response.status, error: data }, 'error');
+                }
+            } catch (error) {
+                addResult('❌ Health Check Network Error', error.message, 'error');
+            }
+        }
+
+        // Auto-run tests on page load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                addResult('🚀 Auto-testing all endpoints...', 'Running automatic tests', 'info');
+                testHealth();
+                setTimeout(testProjects, 500);
+                setTimeout(testSkills, 1000);
+                setTimeout(testBlogs, 1500);
+            }, 1000);
+        });
+    </script>
+</body>
+
+</html>

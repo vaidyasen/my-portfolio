@@ -9,6 +9,30 @@ import (
 	"github.com/ritikvaidyasen/portfolio-server/models"
 )
 
+// Public endpoint for getting skills
+func GetSkills(c *gin.Context) {
+	var skills []models.Skill
+	query := config.DB
+
+	// Category filter
+	if category := c.Query("category"); category != "" {
+		query = query.Where("category = ?", category)
+	}
+
+	// Get skills from database, ordered by level desc and name asc
+	if err := query.Order("level DESC, name ASC").Find(&skills).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to fetch skills",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"skills": skills,
+		"count":  len(skills),
+	})
+}
+
 func GetAdminSkills(c *gin.Context) {
 	var skills []models.Skill
 	query := config.DB

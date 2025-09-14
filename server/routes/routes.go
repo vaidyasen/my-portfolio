@@ -12,6 +12,9 @@ func RegisterRoutes(r *gin.Engine) {
 	api := r.Group("/api")
 	{
 		api.GET("/projects", controllers.GetProjects)
+		api.GET("/skills", controllers.GetSkills)
+		api.GET("/blogs", controllers.GetBlogs)
+		api.GET("/blogs/:slug", controllers.GetBlogBySlug)
 		api.POST("/contact", controllers.SubmitContact)
 		api.GET("/resume", controllers.GetResume)
 	}
@@ -22,6 +25,8 @@ func RegisterRoutes(r *gin.Engine) {
 		auth.POST("/login", controllers.AdminLogin)
 		auth.POST("/setup", controllers.CreateAdminUser) // Remove in production
 		auth.POST("/migrate-projects", controllers.MigrateExistingProjects) // One-time migration
+		auth.POST("/update-projects", controllers.UpdateProjectsFromGitHub) // Update projects with GitHub data
+		auth.POST("/real-projects", controllers.UpdateWithRealGitHubProjects) // Update with real GitHub projects
 	}
 	
 	// Admin routes - protected by JWT and admin role

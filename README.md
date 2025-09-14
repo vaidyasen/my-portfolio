@@ -245,6 +245,82 @@ projects := []Project{
 - 🏠 Content Security Policy
 - 📝 Sanitized database queries
 
+## 🚀 Deployment Guide
+
+### Backend Deployment (Render.com - FREE)
+
+1. **Create Render Account**
+
+   - Go to [render.com](https://render.com)
+   - Sign up with your GitHub account
+   - Connect your GitHub repository
+
+2. **Deploy Backend**
+
+   - Click "New +" → "Web Service"
+   - Connect your GitHub repo
+   - Configure the service:
+     - **Name**: `portfolio-backend`
+     - **Root Directory**: `server`
+     - **Environment**: `Go`
+     - **Build Command**: `go mod download && go build -o portfolio-server main.go`
+     - **Start Command**: `./portfolio-server`
+     - **Instance Type**: `Free`
+
+3. **Environment Variables** (in Render dashboard):
+   ```
+   GIN_MODE=release
+   PORT=10000
+   ```
+
+### Frontend Deployment (Vercel - FREE)
+
+1. **Install Vercel CLI**:
+
+   ```bash
+   npm install -g vercel
+   ```
+
+2. **Deploy Frontend**:
+
+   ```bash
+   cd client
+   vercel --prod
+   ```
+
+3. **Update API URL**: Update `client/src/config/environment.js` with your backend URL
+
+## 🏗️ Architecture & Design Principles
+
+This project follows **SOLID principles** and modern software architecture patterns:
+
+### SOLID Principles Implementation
+
+- **Single Responsibility**: Each component/service has one clear purpose
+- **Open/Closed**: Services are extensible without modification
+- **Liskov Substitution**: Consistent interfaces across similar components
+- **Interface Segregation**: Focused, minimal interfaces
+- **Dependency Inversion**: Services depend on abstractions, not concretions
+
+### Architecture Highlights
+
+- **Service Layer Pattern**: Separation of business logic from controllers
+- **Custom Hooks**: Reusable state logic and data fetching
+- **Error Boundaries**: Graceful error handling in React
+- **Validation Layer**: Input validation and sanitization
+- **Logging System**: Comprehensive logging for debugging and monitoring
+
+## 📋 Sample Projects
+
+The portfolio includes these example projects (customize with your own):
+
+1. **Personal Portfolio Website** - This project (React, Go, TailwindCSS)
+2. **React Todo Application** - Feature-rich todo app with React hooks
+3. **Weather App** - Weather app using OpenWeatherMap API
+4. **E-commerce Shopping Cart** - Modern e-commerce frontend
+5. **REST API with Go** - RESTful API server with Gin framework
+6. **Python Data Analysis** - Data analysis with pandas and matplotlib
+
 ## 🤝 Contributing
 
 1. Fork the repository

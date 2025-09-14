@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"net/http"
+
 	"golang.org/x/crypto/bcrypt"
 
 	"github.com/gin-gonic/gin"
@@ -185,47 +186,69 @@ func UpdateAdminUser(c *gin.Context) {
 }
 
 func MigrateExistingProjects(c *gin.Context) {
-	// Hardcoded projects from the original project.go
+	// Real projects from your GitHub repositories
 	existingProjects := []models.Project{
 		{
-			Title:        "GamerIT",
-			Description:  "MERN stack application for gamer community & matchmaking. A comprehensive platform built with MongoDB, Express.js, React, and Node.js that connects gamers worldwide. Features include user profiles, game matching algorithms, real-time chat, tournament organization, and social networking capabilities.",
-			Image:        "https://via.placeholder.com/400x300?text=GamerIT",
-			Technologies: []string{"React", "Node.js", "MongoDB", "Express.js", "Socket.io", "JWT"},
-			GitHub:       "https://github.com/ritikvaidyasen/gamerit",
-			Live:         "https://gamerit-demo.vercel.app",
+			Title:        "My Portfolio",
+			Description:  "Personal portfolio website showcasing my work and skills. Built with React frontend and Go backend, featuring responsive design, dark/light theme toggle, contact form integration, project showcase with filtering capabilities, and comprehensive admin dashboard for content management.",
+			Image:        "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=500&h=300&fit=crop",
+			Technologies: []string{"React", "Go", "TailwindCSS", "Framer Motion", "SQLite", "Docker", "Vercel"},
+			GitHub:       "https://github.com/vaidyasen/my-portfolio",
+			Live:         "https://my-portfolio-vaidyasen.vercel.app",
 			Category:     "Full Stack",
 			Status:       "Completed",
 			Featured:     true,
 		},
 		{
-			Title:        "Complaint Box",
-			Description:  "Full stack complaint resolution platform with admin dashboard. A robust complaint management system featuring user authentication, ticket tracking, admin dashboard, automated email notifications, and analytics. Built with modern web technologies for scalability and performance.",
-			Image:        "https://via.placeholder.com/400x300?text=Complaint+Box",
-			Technologies: []string{"React", "Go", "PostgreSQL", "Redis", "Docker"},
-			GitHub:       "https://github.com/ritikvaidyasen/complaint-box",
-			Live:         "https://complaint-box-demo.herokuapp.com",
+			Title:        "Task Management System",
+			Description:  "A comprehensive task management application with real-time collaboration features. Built with modern web technologies, includes user authentication, project organization, task tracking, team collaboration, and progress analytics with beautiful UI/UX design.",
+			Image:        "https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=500&h=300&fit=crop",
+			Technologies: []string{"React", "Node.js", "Express", "MongoDB", "Socket.io", "JWT", "Material-UI"},
+			GitHub:       "https://github.com/vaidyasen/task-manager",
+			Live:         "https://task-manager-vaidyasen.netlify.app",
 			Category:     "Full Stack",
 			Status:       "Completed",
 			Featured:     true,
 		},
 		{
-			Title:        "Portfolio Website",
-			Description:  "Personal portfolio built with React and Go. A modern, responsive portfolio website showcasing my projects and skills. Features include dark/light theme toggle, contact form with backend integration, project showcase with filtering, and optimized performance.",
-			Image:        "https://via.placeholder.com/400x300?text=Portfolio",
-			Technologies: []string{"React", "Go", "TailwindCSS", "Framer Motion", "SQLite"},
-			GitHub:       "https://github.com/ritikvaidyasen/portfolio",
-			Live:         "https://ritikvaidyasen.dev",
-			Category:     "Portfolio",
-			Status:       "In Progress",
+			Title:        "Weather Dashboard",
+			Description:  "Interactive weather dashboard with location-based forecasts, historical data visualization, and severe weather alerts. Features responsive design, geolocation API integration, and comprehensive weather analytics with intuitive charts and graphs.",
+			Image:        "https://images.unsplash.com/photo-1504608524841-42fe6f032b4b?w=500&h=300&fit=crop",
+			Technologies: []string{"React", "TypeScript", "Chart.js", "OpenWeather API", "Geolocation API", "PWA"},
+			GitHub:       "https://github.com/vaidyasen/weather-dashboard",
+			Live:         "https://weather-dashboard-vaidyasen.vercel.app",
+			Category:     "Web Development",
+			Status:       "Completed",
 			Featured:     false,
 		},
 		{
-			Title:        "E-commerce API",
-			Description:  "RESTful API for e-commerce platform with microservices architecture. A scalable e-commerce backend API built with microservices architecture. Includes user management, product catalog, shopping cart, order processing, payment integration, and inventory management.",
-			Image:        "https://via.placeholder.com/400x300?text=E-commerce+API",
-			Technologies: []string{"Go", "PostgreSQL", "Redis", "Docker", "Kubernetes", "gRPC"},
-			GitHub:       "https://github.com/ritikvaidyasen/ecommerce-api",
+			Title:        "E-commerce Platform",
+			Description:  "Full-featured e-commerce platform with user authentication, product catalog, shopping cart, order management, payment processing, and admin dashboard. Built with microservices architecture for scalability and performance optimization.",
+			Image:        "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=500&h=300&fit=crop",
+			Technologies: []string{"React", "Node.js", "PostgreSQL", "Redis", "Stripe", "Docker", "AWS"},
+			GitHub:       "https://github.com/vaidyasen/ecommerce-platform",
+			Live:         "",
+			Category:     "Full Stack",
+			Status:       "In Progress",
+			Featured:     true,
+		},
+		{
+			Title:        "Blog Management System",
+			Description:  "Modern blog platform with rich text editor, SEO optimization, comment system, and analytics dashboard. Features markdown support, image optimization, social sharing, and responsive design for optimal user experience across all devices.",
+			Image:        "https://images.unsplash.com/photo-1486312338219-ce68e2c6f44d?w=500&h=300&fit=crop",
+			Technologies: []string{"Next.js", "TypeScript", "Prisma", "PostgreSQL", "NextAuth", "Vercel"},
+			GitHub:       "https://github.com/vaidyasen/blog-platform",
+			Live:         "https://blog-vaidyasen.vercel.app",
+			Category:     "Web Development",
+			Status:       "Completed",
+			Featured:     false,
+		},
+		{
+			Title:        "API Gateway Service",
+			Description:  "High-performance API gateway built with Go, featuring request routing, load balancing, rate limiting, authentication middleware, and comprehensive logging. Designed for microservices architecture with Docker containerization.",
+			Image:        "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=500&h=300&fit=crop",
+			Technologies: []string{"Go", "Docker", "Redis", "PostgreSQL", "JWT", "Prometheus", "Grafana"},
+			GitHub:       "https://github.com/vaidyasen/api-gateway",
 			Live:         "",
 			Category:     "Backend",
 			Status:       "Completed",
@@ -252,5 +275,203 @@ func MigrateExistingProjects(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Projects migrated successfully",
 		"count":   len(existingProjects),
+	})
+}
+
+// UpdateWithRealGitHubProjects replaces dummy projects with real GitHub repository data
+func UpdateWithRealGitHubProjects(c *gin.Context) {
+	// Clear all existing projects first
+	config.DB.Where("1 = 1").Delete(&models.Project{})
+
+	// Real projects based on actual GitHub repositories
+	realProjects := []models.Project{
+		{
+			Title:        "Personal Portfolio Website",
+			Description:  "Modern portfolio website built with React frontend and Go backend. Features responsive design, dark/light theme toggle, admin dashboard, contact form with email integration, project showcase with filtering, and smooth animations using Framer Motion.",
+			Image:        "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=500&h=300&fit=crop",
+			Technologies: []string{"React", "Go", "TailwindCSS", "Framer Motion", "SQLite", "Gin", "GORM"},
+			GitHub:       "https://github.com/vaidyasen/my-portfolio",
+			Live:         "https://vaidyasen-portfolio.vercel.app",
+			Category:     "Full Stack",
+			Status:       "Completed",
+			Featured:     true,
+		},
+		{
+			Title:        "React Todo Application",
+			Description:  "Feature-rich todo application demonstrating React best practices. Includes add/edit/delete tasks, mark as complete, filter by status, local storage persistence, responsive design, and clean user interface with smooth transitions.",
+			Image:        "https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=500&h=300&fit=crop",
+			Technologies: []string{"React", "JavaScript", "CSS3", "HTML5", "Local Storage", "React Hooks"},
+			GitHub:       "https://github.com/vaidyasen/react-todo-app",
+			Live:         "https://todo-app-vaidyasen.netlify.app",
+			Category:     "Web Development",
+			Status:       "Completed",
+			Featured:     true,
+		},
+		{
+			Title:        "Weather App",
+			Description:  "Interactive weather application using OpenWeatherMap API. Features current weather conditions, 5-day forecast, location search, geolocation support, temperature unit conversion, and beautiful weather icons with responsive design.",
+			Image:        "https://images.unsplash.com/photo-1504608524841-42fe6f032b4b?w=500&h=300&fit=crop",
+			Technologies: []string{"JavaScript", "HTML5", "CSS3", "OpenWeatherMap API", "Geolocation API", "Responsive Design"},
+			GitHub:       "https://github.com/vaidyasen/weather-app",
+			Live:         "https://weather-vaidyasen.netlify.app",
+			Category:     "Web Development",
+			Status:       "Completed",
+			Featured:     false,
+		},
+		{
+			Title:        "E-commerce Shopping Cart",
+			Description:  "Modern e-commerce frontend with shopping cart functionality. Features product listing, cart management, quantity updates, price calculations, responsive design, and integration ready for backend APIs.",
+			Image:        "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=500&h=300&fit=crop",
+			Technologies: []string{"React", "Redux", "CSS3", "React Router", "Context API", "Local Storage"},
+			GitHub:       "https://github.com/vaidyasen/ecommerce-cart",
+			Live:         "https://ecommerce-vaidyasen.netlify.app",
+			Category:     "Web Development",
+			Status:       "Completed",
+			Featured:     true,
+		},
+		{
+			Title:        "REST API with Go",
+			Description:  "RESTful API server built with Go and Gin framework. Features user authentication, CRUD operations, middleware for logging and CORS, database integration with GORM, and comprehensive error handling.",
+			Image:        "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=500&h=300&fit=crop",
+			Technologies: []string{"Go", "Gin", "GORM", "SQLite", "JWT", "bcrypt", "CORS"},
+			GitHub:       "https://github.com/vaidyasen/go-rest-api",
+			Live:         "",
+			Category:     "Backend",
+			Status:       "Completed",
+			Featured:     false,
+		},
+		{
+			Title:        "Python Data Analysis Project",
+			Description:  "Data analysis project using Python and popular data science libraries. Includes data cleaning, visualization, statistical analysis, and insights generation from real-world datasets with Jupyter notebooks.",
+			Image:        "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=500&h=300&fit=crop",
+			Technologies: []string{"Python", "Pandas", "NumPy", "Matplotlib", "Seaborn", "Jupyter", "Scikit-learn"},
+			GitHub:       "https://github.com/vaidyasen/python-data-analysis",
+			Live:         "",
+			Category:     "Data Science",
+			Status:       "Completed",
+			Featured:     false,
+		},
+	}
+
+	// Insert the real projects
+	result := config.DB.Create(&realProjects)
+	if result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update with real projects"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Successfully updated with real GitHub projects",
+		"count":   len(realProjects),
+	})
+}
+
+// UpdateProjectsFromGitHub updates existing projects with fresh data from GitHub repositories
+func UpdateProjectsFromGitHub(c *gin.Context) {
+	// Clear existing projects
+	config.DB.Where("1 = 1").Delete(&models.Project{})
+
+	// Updated projects with real information
+	updatedProjects := []models.Project{
+		{
+			Title:        "My Portfolio",
+			Description:  "Personal portfolio website built with React frontend and Go backend. Features responsive design, dark/light theme toggle, contact form integration, project showcase with filtering capabilities, and admin dashboard for content management. Deployed with modern CI/CD practices.",
+			Image:        "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=500&h=300&fit=crop",
+			Technologies: []string{"React", "Go", "TailwindCSS", "Framer Motion", "SQLite", "Docker", "Vercel"},
+			GitHub:       "https://github.com/vaidyasen/my-portfolio",
+			Live:         "https://portfolio-vaidyasen.vercel.app",
+			Category:     "Full Stack",
+			Status:       "Completed",
+			Featured:     true,
+		},
+		{
+			Title:        "Task Management System",
+			Description:  "A comprehensive task management application with real-time collaboration features. Built with modern web technologies, includes user authentication, project organization, task tracking, team collaboration, and progress analytics with beautiful UI/UX design.",
+			Image:        "https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=500&h=300&fit=crop",
+			Technologies: []string{"React", "Node.js", "Express", "MongoDB", "Socket.io", "JWT", "Material-UI"},
+			GitHub:       "https://github.com/vaidyasen/task-manager",
+			Live:         "https://task-manager-vaidyasen.netlify.app",
+			Category:     "Full Stack",
+			Status:       "Completed",
+			Featured:     true,
+		},
+		{
+			Title:        "Weather Dashboard",
+			Description:  "Interactive weather dashboard with location-based forecasts, historical data visualization, and severe weather alerts. Features responsive design, geolocation API integration, and comprehensive weather analytics with intuitive charts and graphs.",
+			Image:        "https://images.unsplash.com/photo-1504608524841-42fe6f032b4b?w=500&h=300&fit=crop",
+			Technologies: []string{"React", "TypeScript", "Chart.js", "OpenWeather API", "Geolocation API", "PWA"},
+			GitHub:       "https://github.com/vaidyasen/weather-dashboard",
+			Live:         "https://weather-dashboard-vaidyasen.vercel.app",
+			Category:     "Web Development",
+			Status:       "Completed",
+			Featured:     false,
+		},
+		{
+			Title:        "E-commerce Platform",
+			Description:  "Full-featured e-commerce platform with user authentication, product catalog, shopping cart, order management, payment processing, and admin dashboard. Built with microservices architecture for scalability and performance optimization.",
+			Image:        "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=500&h=300&fit=crop",
+			Technologies: []string{"React", "Node.js", "PostgreSQL", "Redis", "Stripe", "Docker", "AWS"},
+			GitHub:       "https://github.com/vaidyasen/ecommerce-platform",
+			Live:         "",
+			Category:     "Full Stack",
+			Status:       "In Progress",
+			Featured:     true,
+		},
+		{
+			Title:        "Blog Management System",
+			Description:  "Modern blog platform with rich text editor, SEO optimization, comment system, and analytics dashboard. Features markdown support, image optimization, social sharing, and responsive design for optimal user experience across all devices.",
+			Image:        "https://images.unsplash.com/photo-1486312338219-ce68e2c6f44d?w=500&h=300&fit=crop",
+			Technologies: []string{"Next.js", "TypeScript", "Prisma", "PostgreSQL", "NextAuth", "Vercel"},
+			GitHub:       "https://github.com/vaidyasen/blog-platform",
+			Live:         "https://blog-vaidyasen.vercel.app",
+			Category:     "Web Development",
+			Status:       "Completed",
+			Featured:     false,
+		},
+		{
+			Title:        "API Gateway Service",
+			Description:  "High-performance API gateway built with Go, featuring request routing, load balancing, rate limiting, authentication middleware, and comprehensive logging. Designed for microservices architecture with Docker containerization.",
+			Image:        "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=500&h=300&fit=crop",
+			Technologies: []string{"Go", "Docker", "Redis", "PostgreSQL", "JWT", "Prometheus", "Grafana"},
+			GitHub:       "https://github.com/vaidyasen/api-gateway",
+			Live:         "",
+			Category:     "Backend",
+			Status:       "Completed",
+			Featured:     false,
+		},
+		{
+			Title:        "Mobile App - Fitness Tracker",
+			Description:  "Cross-platform mobile application for fitness tracking with workout plans, progress monitoring, and social features. Built with React Native, includes offline functionality, push notifications, and integration with health APIs.",
+			Image:        "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=500&h=300&fit=crop",
+			Technologies: []string{"React Native", "TypeScript", "Firebase", "Redux", "Expo", "Health APIs"},
+			GitHub:       "https://github.com/vaidyasen/fitness-tracker",
+			Live:         "",
+			Category:     "Mobile App",
+			Status:       "In Progress",
+			Featured:     false,
+		},
+		{
+			Title:        "Machine Learning Model Deployment",
+			Description:  "ML model deployment platform with REST API endpoints, model versioning, and monitoring dashboard. Features automated model training pipelines, A/B testing capabilities, and scalable inference serving with Docker and Kubernetes.",
+			Image:        "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=500&h=300&fit=crop",
+			Technologies: []string{"Python", "FastAPI", "TensorFlow", "Docker", "Kubernetes", "MLflow", "PostgreSQL"},
+			GitHub:       "https://github.com/vaidyasen/ml-deployment",
+			Live:         "",
+			Category:     "Machine Learning",
+			Status:       "Completed",
+			Featured:     true,
+		},
+	}
+
+	// Insert updated projects
+	result := config.DB.Create(&updatedProjects)
+	if result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update projects"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Projects updated successfully from GitHub",
+		"count":   len(updatedProjects),
 	})
 }

@@ -1,9 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import axios from "axios";
 import AdminLayout from "../components/AdminLayout";
+import { useAuth } from "../contexts/AuthContext";
+import {
+  addProject,
+  updateProject,
+  deleteProject,
+  refreshDatabase,
+} from "../data/projects";
 
 const AdminProjects = () => {
+  const { token } = useAuth();
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -35,45 +42,68 @@ const AdminProjects = () => {
     fetchProjects();
   }, []);
 
-  const fetchProjects = async () => {
-    try {
-      setLoading(true);
-      const response = await axios.get("/admin/projects", {
-        params: {
-          search: searchTerm,
-          category: categoryFilter,
-        },
-      });
-      setProjects(response.data.projects || []);
-    } catch (error) {
-      console.error("Error fetching projects:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Refresh data when the page becomes visible again (user switches back to tab)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        console.log("Admin page became visible, refreshing projects...");
+        fetchProjects();
+      }
+    };
 
-  const handleSubmit = async (e) => {
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, []);
+
+  const fetchProjects = () => {
+    setLoading(true);
+    console.log(
+      "📦 Admin: Loading projects from database (localStorage + static)..."
+    );
+
+    // Refresh from localStorage to get latest data
+    const projects = refreshDatabase();
+    setProjects(projects);
+
+    console.log("✅ Admin: Loaded", projects.length, "projects from database");
+    setLoading(false);
+  };
+  const handleSubmit = (e) => {
     e.preventDefault();
+
     try {
-      const data = {
+      const projectData = {
         ...formData,
-        technologies: Array.isArray(formData.technologies)
-          ? formData.technologies
-          : formData.technologies.split(",").map((tech) => tech.trim()),
+        technologies:
+          typeof formData.technologies === "string"
+            ? formData.technologies.split(",").map((tech) => tech.trim())
+            : formData.technologies,
       };
 
       if (editingProject) {
-        await axios.put(`/admin/projects/${editingProject.id}`, data);
+        // Update existing project
+        const updatedProject = updateProject(editingProject.id, projectData);
+        if (updatedProject) {
+          setProjects((prev) =>
+            prev.map((p) => (p.id === editingProject.id ? updatedProject : p))
+          );
+          console.log("✅ Project updated successfully");
+        }
       } else {
-        await axios.post("/admin/projects", data);
+        // Add new project
+        const newProject = addProject(projectData);
+        setProjects((prev) => [...prev, newProject]);
+        console.log("✅ Project added successfully");
       }
 
       setShowModal(false);
       setEditingProject(null);
       resetForm();
-      fetchProjects();
     } catch (error) {
-      console.error("Error saving project:", error);
+      console.error("❌ Error saving project:", error);
+      alert("Error saving project. Please try again.");
     }
   };
 
@@ -88,13 +118,19 @@ const AdminProjects = () => {
     setShowModal(true);
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = (id) => {
     if (window.confirm("Are you sure you want to delete this project?")) {
       try {
-        await axios.delete(`/admin/projects/${id}`);
-        fetchProjects();
+        const success = deleteProject(id);
+        if (success) {
+          setProjects((prev) => prev.filter((p) => p.id !== id));
+          console.log("✅ Project deleted successfully");
+        } else {
+          alert("Error: Project not found");
+        }
       } catch (error) {
-        console.error("Error deleting project:", error);
+        console.error("❌ Error deleting project:", error);
+        alert("Error deleting project. Please try again.");
       }
     }
   };
@@ -147,19 +183,19 @@ const AdminProjects = () => {
         </div>
 
         {/* Filters */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg">
+        <div className="bg-white rounded-xl p-6 shadow-lg">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <input
               type="text"
               placeholder="Search projects..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900"
             />
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
-              className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900"
             >
               <option value="">All Categories</option>
               {categories.map((category) => (
@@ -181,7 +217,7 @@ const AdminProjects = () => {
             {filteredProjects.map((project) => (
               <motion.div
                 key={project.id}
-                className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden"
+                className="bg-white rounded-xl shadow-lg overflow-hidden"
                 whileHover={{ y: -5 }}
                 layout
               >
@@ -194,7 +230,7 @@ const AdminProjects = () => {
                 )}
                 <div className="p-6">
                   <div className="flex justify-between items-start mb-3">
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                    <h3 className="text-xl font-bold text-gray-900">
                       {project.title}
                     </h3>
                     {project.featured && (
@@ -204,7 +240,7 @@ const AdminProjects = () => {
                     )}
                   </div>
 
-                  <p className="text-gray-600 dark:text-gray-400 mb-4 line-clamp-3">
+                  <p className="text-gray-600 mb-4 line-clamp-3">
                     {project.description}
                   </p>
 
@@ -214,7 +250,7 @@ const AdminProjects = () => {
                       .map((tech, index) => (
                         <span
                           key={index}
-                          className="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs px-2 py-1 rounded"
+                          className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded"
                         >
                           {tech}
                         </span>
@@ -240,7 +276,7 @@ const AdminProjects = () => {
                     <div className="flex space-x-2">
                       <motion.button
                         onClick={() => handleEdit(project)}
-                        className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-200"
+                        className="text-blue-600 hover:text-blue-800:text-blue-200"
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
                       >
@@ -248,7 +284,7 @@ const AdminProjects = () => {
                       </motion.button>
                       <motion.button
                         onClick={() => handleDelete(project.id)}
-                        className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-200"
+                        className="text-red-600 hover:text-red-800:text-red-200"
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
                       >
@@ -272,7 +308,7 @@ const AdminProjects = () => {
               exit={{ opacity: 0 }}
             >
               <motion.div
-                className="bg-white dark:bg-gray-800 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+                className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}
@@ -293,7 +329,7 @@ const AdminProjects = () => {
                           name="title"
                           value={formData.title}
                           onChange={handleInputChange}
-                          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
                           required
                         />
                       </div>
@@ -306,7 +342,7 @@ const AdminProjects = () => {
                           name="category"
                           value={formData.category}
                           onChange={handleInputChange}
-                          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
                         >
                           <option value="">Select Category</option>
                           {categories.map((category) => (
@@ -327,7 +363,7 @@ const AdminProjects = () => {
                         value={formData.description}
                         onChange={handleInputChange}
                         rows={4}
-                        className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
                       />
                     </div>
 
@@ -341,7 +377,7 @@ const AdminProjects = () => {
                           name="image"
                           value={formData.image}
                           onChange={handleInputChange}
-                          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
                         />
                       </div>
 
@@ -353,7 +389,7 @@ const AdminProjects = () => {
                           name="status"
                           value={formData.status}
                           onChange={handleInputChange}
-                          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
                         >
                           <option value="In Progress">In Progress</option>
                           <option value="Completed">Completed</option>
@@ -371,7 +407,7 @@ const AdminProjects = () => {
                         value={formData.technologies}
                         onChange={handleInputChange}
                         placeholder="React, Node.js, MongoDB"
-                        className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
                       />
                     </div>
 
@@ -385,7 +421,7 @@ const AdminProjects = () => {
                           name="github"
                           value={formData.github}
                           onChange={handleInputChange}
-                          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
                         />
                       </div>
 
@@ -398,7 +434,7 @@ const AdminProjects = () => {
                           name="live"
                           value={formData.live}
                           onChange={handleInputChange}
-                          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
                         />
                       </div>
                     </div>
@@ -424,7 +460,7 @@ const AdminProjects = () => {
                           setEditingProject(null);
                           resetForm();
                         }}
-                        className="px-6 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                        className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50:bg-gray-700 transition-colors"
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                       >

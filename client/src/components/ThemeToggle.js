@@ -1,10 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
+const getInitialTheme = () => {
+ const savedTheme = localStorage.getItem("theme");
+ if (savedTheme) return savedTheme === "dark";
+
+ return window.matchMedia?.("(prefers-color-scheme: dark)").matches ?? false;
+};
+
 export default function ThemeToggle() {
- const [dark, setDark] = useState(
-  () => localStorage.getItem("theme") === "dark"
- );
+ const [dark, setDark] = useState(getInitialTheme);
 
  useEffect(() => {
   document.documentElement.classList.toggle("dark", dark);
@@ -17,6 +22,9 @@ export default function ThemeToggle() {
 
  return (
   <motion.button
+   type="button"
+   aria-label={`Switch to ${dark ? "light" : "dark"} theme`}
+   aria-pressed={dark}
    onClick={toggleTheme}
    className="relative w-14 h-8 bg-gray-200 dark:bg-gray-700 rounded-full p-1 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
    whileTap={{ scale: 0.95 }}

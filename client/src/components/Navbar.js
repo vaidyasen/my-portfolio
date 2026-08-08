@@ -80,6 +80,10 @@ export default function Navbar() {
      <div className="md:hidden flex items-center space-x-2">
       <ThemeToggle />
       <motion.button
+       type="button"
+       aria-label={isMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+       aria-expanded={isMenuOpen}
+       aria-controls="mobile-navigation"
        onClick={() => setIsMenuOpen(!isMenuOpen)}
        className="p-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
        whileTap={{ scale: 0.95 }}
@@ -114,6 +118,7 @@ export default function Navbar() {
     <AnimatePresence>
      {isMenuOpen && (
       <motion.div
+       id="mobile-navigation"
        className="md:hidden"
        initial={{ opacity: 0, height: 0 }}
        animate={{ opacity: 1, height: "auto" }}

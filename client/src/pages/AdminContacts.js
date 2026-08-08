@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import axios from "axios";
 import AdminLayout from "../components/AdminLayout";
@@ -15,11 +15,7 @@ const AdminContacts = () => {
   const [selectedContact, setSelectedContact] = useState(null);
   const [showContactModal, setShowContactModal] = useState(false);
 
-  useEffect(() => {
-    fetchContacts();
-  }, [pagination.page]);
-
-  const fetchContacts = async () => {
+  const fetchContacts = useCallback(async () => {
     try {
       setLoading(true);
       const token = localStorage.getItem("admin_token");
@@ -57,7 +53,11 @@ const AdminContacts = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [pagination.limit, pagination.page]);
+
+  useEffect(() => {
+    fetchContacts();
+  }, [fetchContacts]);
 
   const markAsRead = async (contactId, read) => {
     try {

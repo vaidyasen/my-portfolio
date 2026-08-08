@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import AdminLayout from "../components/AdminLayout";
 import SkillService from "../services/SkillService";
@@ -27,11 +27,7 @@ const AdminSkills = () => {
     "Other",
   ];
 
-  useEffect(() => {
-    fetchSkills();
-  }, []);
-
-  const fetchSkills = async () => {
+  const fetchSkills = useCallback(async () => {
     try {
       console.log(
         "🔑 Fetching skills with token:",
@@ -56,7 +52,7 @@ const AdminSkills = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [categoryFilter, searchTerm]);
 
   useEffect(() => {
     const delayedSearch = setTimeout(() => {
@@ -64,7 +60,7 @@ const AdminSkills = () => {
     }, 300);
 
     return () => clearTimeout(delayedSearch);
-  }, [searchTerm, categoryFilter]);
+  }, [fetchSkills]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

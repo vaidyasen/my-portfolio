@@ -1,5 +1,7 @@
 import axios from "axios";
 
+import { ApiService as ApiServiceClass } from "../services/ApiService";
+
 // Mock axios before importing ApiService
 jest.mock("axios", () => {
   const mockAxiosInstance = {
@@ -33,8 +35,6 @@ jest.mock("../utils/logger", () => ({
   },
 }));
 
-import ApiService from "../services/ApiService";
-
 // Mock localStorage
 const localStorageMock = {
   getItem: jest.fn(),
@@ -42,7 +42,10 @@ const localStorageMock = {
   removeItem: jest.fn(),
   clear: jest.fn(),
 };
-global.localStorage = localStorageMock;
+Object.defineProperty(window, "localStorage", {
+  configurable: true,
+  value: localStorageMock,
+});
 
 // Mock window.location
 delete window.location;
@@ -53,17 +56,28 @@ describe("ApiService", () => {
   let mockAxiosInstance;
 
   beforeEach(() => {
-    // Clear all mocks
-    jest.clearAllMocks();
-
-    // Reset localStorage mock
+    mockAxiosInstance = {
+      get: jest.fn(),
+      post: jest.fn(),
+      put: jest.fn(),
+      delete: jest.fn(),
+      interceptors: {
+        request: { use: jest.fn() },
+        response: { use: jest.fn() },
+      },
+    };
+    axios.create.mockImplementation(() => mockAxiosInstance);
+    axios.create.mockClear();
+    localStorageMock.getItem.mockReset();
+    localStorageMock.removeItem.mockReset();
     localStorageMock.getItem.mockReturnValue(null);
 
-    // Get the singleton ApiService instance
-    apiService = ApiService;
-
-    // Get the mock axios instance
+    apiService = new ApiServiceClass();
     mockAxiosInstance = axios.create.mock.results[0].value;
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   describe("constructor", () => {
@@ -128,7 +142,7 @@ describe("ApiService", () => {
       expect(result).toBe(response);
     });
 
-    it("should redirect to login on 401 error", () => {
+    it("should redirect to login on 401 error", async () => {
       const error = {
         response: { status: 401 },
       };
@@ -138,7 +152,7 @@ describe("ApiService", () => {
       delete window.location;
       window.location = { href: "" };
 
-      errorHandler(error);
+      await expect(errorHandler(error)).rejects.toBe(error);
 
       expect(window.location.href).toBe("/admin/login");
 
@@ -146,12 +160,12 @@ describe("ApiService", () => {
       window.location = originalLocation;
     });
 
-    it("should reject non-401 errors", () => {
+    it("should reject non-401 errors", async () => {
       const error = {
         response: { status: 500 },
       };
 
-      expect(() => errorHandler(error)).toThrow();
+      await expect(errorHandler(error)).rejects.toBe(error);
     });
   });
 

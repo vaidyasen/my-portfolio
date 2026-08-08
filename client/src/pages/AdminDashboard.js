@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import axios from "axios";
 import AdminLayout from "../components/AdminLayout";
@@ -15,22 +15,16 @@ const AdminDashboard = () => {
   });
   const [loading, setLoading] = useState(true);
 
-  const getAuthHeaders = () => ({
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-  });
-
-  useEffect(() => {
-    fetchStats();
-  }, []);
-
-  const fetchStats = async () => {
+  const fetchStats = useCallback(async () => {
     try {
       const response = await axios.get(
         `${API_BASE_URL}/admin/dashboard`,
-        getAuthHeaders()
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
       );
       setStats(response.data.stats);
     } catch (error) {
@@ -38,7 +32,11 @@ const AdminDashboard = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]);
+
+  useEffect(() => {
+    fetchStats();
+  }, [fetchStats]);
 
   const statCards = [
     {

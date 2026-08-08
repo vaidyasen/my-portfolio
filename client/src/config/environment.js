@@ -43,4 +43,6 @@ class Environment {
   }
 }
 
-export default new Environment();
+const environment = new Environment();
+
+export default environment;

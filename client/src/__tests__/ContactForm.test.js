@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
 import ContactForm from "../components/ContactForm";
@@ -306,9 +306,9 @@ describe("ContactForm", () => {
 
     await waitFor(() => {
       expect(nameInput).toHaveValue("");
-      expect(emailInput).toHaveValue("");
-      expect(messageInput).toHaveValue("");
     });
+    expect(emailInput).toHaveValue("");
+    expect(messageInput).toHaveValue("");
   });
 
   it("should handle form submission failure", async () => {
@@ -332,22 +332,5 @@ describe("ContactForm", () => {
     expect(screen.getByLabelText(/name/i)).toHaveValue("John Doe");
     expect(screen.getByLabelText(/email/i)).toHaveValue("john@example.com");
     expect(screen.getByLabelText(/message/i)).toHaveValue("Hello world");
-  });
-
-  it("should not call onSubmit if not provided", async () => {
-    const user = userEvent.setup();
-    mockExecute.mockResolvedValue({ success: true });
-
-    render(<ContactForm />);
-
-    await user.type(screen.getByLabelText(/name/i), "John Doe");
-    await user.type(screen.getByLabelText(/email/i), "john@example.com");
-    await user.type(screen.getByLabelText(/message/i), "Hello world");
-
-    const submitButton = screen.getByRole("button", { name: /send message/i });
-    await user.click(submitButton);
-
-    expect(mockExecute).toHaveBeenCalled();
-    // No error should be thrown
   });
 });

@@ -1,25 +1,24 @@
 import React from "react";
 import { motion } from "framer-motion";
 
-export default function ProjectCard({ project, index, onClick }) {
+export default function ProjectCard({ project, index = 0, onClick }) {
  const {
   title,
   description,
   tags = [],
-  githubLink,
-  demoLink,
   image,
-  techStack = [],
  } = project;
+ const githubLink = project.githubLink || project.github || project.github_url;
+ const demoLink = project.demoLink || project.live || project.live_url;
+ const techStack = project.techStack || project.technologies || [];
 
  return (
-  <motion.div
-   className="bg-white dark:bg-gray-700 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer"
+  <motion.article
+   className="bg-white dark:bg-gray-700 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden"
    initial={{ opacity: 0, y: 20 }}
    animate={{ opacity: 1, y: 0 }}
    transition={{ duration: 0.5, delay: index * 0.1 }}
    whileHover={{ y: -5 }}
-   onClick={() => onClick?.(project)}
   >
    {/* Project Image */}
    {image && (
@@ -58,14 +57,13 @@ export default function ProjectCard({ project, index, onClick }) {
     )}
 
     {/* Project Links */}
-    <div className="flex gap-3">
+    <div className="flex flex-wrap gap-3">
      {githubLink && (
       <a
        href={githubLink}
        target="_blank"
        rel="noopener noreferrer"
-       className="flex-1 bg-gray-900 dark:bg-gray-600 text-white py-2 px-4 rounded-lg text-center font-medium hover:bg-gray-800 dark:hover:bg-gray-500 transition-colors"
-       onClick={(e) => e.stopPropagation()}
+       className="flex-1 min-w-24 bg-gray-900 dark:bg-gray-600 text-white py-2 px-4 rounded-lg text-center font-medium hover:bg-gray-800 dark:hover:bg-gray-500 transition-colors"
       >
        GitHub
       </a>
@@ -75,14 +73,22 @@ export default function ProjectCard({ project, index, onClick }) {
        href={demoLink}
        target="_blank"
        rel="noopener noreferrer"
-       className="flex-1 bg-blue-500 text-white py-2 px-4 rounded-lg text-center font-medium hover:bg-blue-600 transition-colors"
-       onClick={(e) => e.stopPropagation()}
+       className="flex-1 min-w-24 bg-blue-500 text-white py-2 px-4 rounded-lg text-center font-medium hover:bg-blue-600 transition-colors"
       >
        Live Demo
       </a>
      )}
+     {onClick && (
+      <button
+       type="button"
+       onClick={() => onClick(project)}
+       className="flex-1 min-w-24 border border-blue-500 text-blue-600 dark:text-blue-300 py-2 px-4 rounded-lg text-center font-medium hover:bg-blue-50 dark:hover:bg-gray-600 transition-colors"
+      >
+       View Details
+      </button>
+     )}
     </div>
    </div>
-  </motion.div>
+  </motion.article>
  );
 }

@@ -8,21 +8,22 @@ import (
 	"github.com/ritikvaidyasen/portfolio-server/services"
 )
 
-var projectService = services.NewProjectService()
-
 // GetProjects handles GET /api/projects
 func GetProjects(c *gin.Context) {
 	// Check if filtering by featured projects
 	featured := c.Query("featured") == "true"
-	
-	projects, err := projectService.GetProjects(featured)
+
+	// Create the service after the application has initialized the database.
+	// A package-level service captured config.DB before main called InitDB,
+	// leaving every project request with a permanently nil database handle.
+	projects, err := services.NewProjectService().GetProjects(featured)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
 		return
 	}
-	
+
 	c.JSON(http.StatusOK, gin.H{
 		"projects": projects,
 		"count":    len(projects),
@@ -40,7 +41,7 @@ func GetProjectByID(c *gin.Context) {
 		return
 	}
 
-	project, err := projectService.GetProjectByID(uint(id))
+	project, err := services.NewProjectService().GetProjectByID(uint(id))
 	if err != nil {
 		status := http.StatusInternalServerError
 		if err.Error() == "project not found" {

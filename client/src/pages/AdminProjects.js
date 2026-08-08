@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import AdminLayout from "../components/AdminLayout";
-import { useAuth } from "../contexts/AuthContext";
 import {
   addProject,
   updateProject,
@@ -10,7 +9,6 @@ import {
 } from "../data/projects";
 
 const AdminProjects = () => {
-  const { token } = useAuth();
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);

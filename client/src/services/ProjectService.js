@@ -42,4 +42,6 @@ export class ProjectService {
   }
 }
 
-export default new ProjectService();
+const projectService = new ProjectService();
+
+export default projectService;

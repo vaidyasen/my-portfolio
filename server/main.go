@@ -21,6 +21,7 @@ func main() {
 	// CORS middleware with specific configuration
 	r.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"http://localhost:3000", "https://client-ocjieqbrf-vaidyasens-projects.vercel.app", "https://*.vercel.app"},
+		AllowWildcard:    true,
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
@@ -29,7 +30,7 @@ func main() {
 
 	// Logging middleware
 	r.Use(gin.Logger())
-	
+
 	// Recovery middleware
 	r.Use(gin.Recovery())
 
@@ -48,5 +49,3 @@ func main() {
 	log.Printf("Server starting on port %s", port)
 	r.Run(":" + port)
 }
-
-

@@ -22,6 +22,8 @@ jest.mock("framer-motion", () => {
         whileInView,
         variants,
         layoutId,
+        layout,
+        viewport,
         ...domProps
       } = props;
 
@@ -36,6 +38,7 @@ jest.mock("framer-motion", () => {
       h1: createMotionComponent("h1"),
       h2: createMotionComponent("h2"),
       h3: createMotionComponent("h3"),
+      h4: createMotionComponent("h4"),
       p: createMotionComponent("p"),
       button: createMotionComponent("button"),
       form: createMotionComponent("form"),
@@ -81,6 +84,10 @@ jest.mock("axios", () => ({
     post: jest.fn(() => Promise.resolve({ data: {} })),
     put: jest.fn(() => Promise.resolve({ data: {} })),
     delete: jest.fn(() => Promise.resolve({ data: {} })),
+    interceptors: {
+      request: { use: jest.fn() },
+      response: { use: jest.fn() },
+    },
   })),
   get: jest.fn(() => Promise.resolve({ data: [] })),
   post: jest.fn(() => Promise.resolve({ data: {} })),

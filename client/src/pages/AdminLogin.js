@@ -22,19 +22,14 @@ const AdminLogin = () => {
 
  const handleSubmit = async (e) => {
   e.preventDefault();
-  console.log("Form submitted with credentials:", credentials); // Debug log
   setLoading(true);
   setError("");
 
   const result = await login(credentials.username, credentials.password);
-  console.log("Login result:", result); // Debug log
 
   if (result.success) {
-   console.log("Login successful, navigating to dashboard"); // Debug log
-   // Navigate to admin dashboard after successful login
    navigate("/admin/dashboard");
   } else {
-   console.log("Login failed:", result.error); // Debug log
    setError(result.error);
   }
 
@@ -76,12 +71,17 @@ const AdminLogin = () => {
 
       <div className="space-y-4">
        <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label
+         htmlFor="admin-username"
+         className="block text-sm font-medium text-gray-700 mb-2"
+        >
          Username
         </label>
         <input
+         id="admin-username"
          type="text"
          name="username"
+         autoComplete="username"
          value={credentials.username}
          onChange={handleChange}
          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900"
@@ -91,12 +91,17 @@ const AdminLogin = () => {
        </div>
 
        <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label
+         htmlFor="admin-password"
+         className="block text-sm font-medium text-gray-700 mb-2"
+        >
          Password
         </label>
         <input
+         id="admin-password"
          type="password"
          name="password"
+         autoComplete="current-password"
          value={credentials.password}
          onChange={handleChange}
          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900"
@@ -128,10 +133,6 @@ const AdminLogin = () => {
       </motion.button>
      </div>
     </form>
-
-    <div className="text-center text-sm text-gray-500">
-     <p>Demo credentials: admin / admin123</p>
-    </div>
    </motion.div>
   </div>
  );

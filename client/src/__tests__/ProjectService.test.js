@@ -1,4 +1,9 @@
 // Mock axios to prevent ApiService initialization issues
+import ProjectService, {
+  ProjectService as ProjectServiceClass,
+} from "../services/ProjectService";
+import ApiService from "../services/ApiService";
+
 jest.mock("axios", () => ({
   create: jest.fn(),
   default: {
@@ -15,12 +20,15 @@ jest.mock("../utils/logger", () => ({
 }));
 
 // Mock ApiService before importing
-jest.mock("../services/ApiService");
-
-import ProjectService, {
-  ProjectService as ProjectServiceClass,
-} from "../services/ProjectService";
-import ApiService from "../services/ApiService";
+jest.mock("../services/ApiService", () => ({
+  __esModule: true,
+  default: {
+    get: jest.fn(),
+    post: jest.fn(),
+    put: jest.fn(),
+    delete: jest.fn(),
+  },
+}));
 
 const mockedApiService = ApiService;
 

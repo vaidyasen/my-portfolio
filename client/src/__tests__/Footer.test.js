@@ -1,19 +1,26 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
+import { BrowserRouter } from "react-router-dom";
 import "@testing-library/jest-dom";
 import Footer from "../components/Footer";
 
 describe("Footer Component", () => {
+ const renderFooter = () => render(
+  <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+   <Footer />
+  </BrowserRouter>
+ );
+
  test("renders footer content", () => {
-  render(<Footer />);
+  renderFooter();
 
   // Check for copyright text
-  expect(screen.getByText(/© 2024 Ritik/i)).toBeInTheDocument();
+  expect(screen.getByText(new RegExp(`© ${new Date().getFullYear()} Ritik`, "i"))).toBeInTheDocument();
   expect(screen.getByText(/all rights reserved/i)).toBeInTheDocument();
  });
 
  test("renders social media links", () => {
-  render(<Footer />);
+  renderFooter();
 
   // Check for social media links (adjust based on your actual implementation)
   const socialLinks = screen.getAllByRole("link");
@@ -21,15 +28,17 @@ describe("Footer Component", () => {
  });
 
  test("has proper footer structure", () => {
-  render(<Footer />);
+  renderFooter();
 
   const footer = screen.getByRole("contentinfo");
   expect(footer).toBeInTheDocument();
  });
 
  test("contains developer name", () => {
-  render(<Footer />);
+  renderFooter();
 
-  expect(screen.getByText(/ritik/i)).toBeInTheDocument();
+  expect(
+   screen.getByRole("heading", { name: "Ritik Vaidyasen" })
+  ).toBeInTheDocument();
  });
 });

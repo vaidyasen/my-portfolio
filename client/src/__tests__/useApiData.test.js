@@ -1,4 +1,3 @@
-import React from "react";
 import { renderHook, act } from "@testing-library/react";
 import {
   useApiData,
@@ -6,6 +5,8 @@ import {
   useSkills,
   useAsyncOperation,
 } from "../hooks/useApiData";
+import ProjectService from "../services/ProjectService";
+import SkillService from "../services/SkillService";
 
 // Mock the service imports
 jest.mock("../services/ProjectService", () => ({
@@ -24,16 +25,19 @@ jest.mock("../services/SkillService", () => ({
 
 // Helper functions to reduce nesting
 const waitForNextTick = () => new Promise((resolve) => setTimeout(resolve, 0));
-const waitFor = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const createDelayedPromise = (result, delay) =>
   new Promise((resolve) => setTimeout(() => resolve(result), delay));
 
 describe("useApiData Hook", () => {
+  beforeEach(() => {
+    ProjectService.getProjects.mockResolvedValue({ success: true, data: [] });
+    SkillService.getSkills.mockResolvedValue({ success: true, data: [] });
+  });
+
   describe("useApiData", () => {
     it("should initialize with loading state", () => {
-      const mockApiCall = jest
-        .fn()
-        .mockResolvedValue({ success: true, data: [] });
+      const mockApiCall = jest.fn(() => new Promise(() => {}));
 
       const { result } = renderHook(() => useApiData(mockApiCall));
 
@@ -108,9 +112,7 @@ describe("useApiData Hook", () => {
 
     it("should use initial data", () => {
       const initialData = [{ id: 0, name: "initial" }];
-      const mockApiCall = jest
-        .fn()
-        .mockResolvedValue({ success: true, data: [] });
+      const mockApiCall = jest.fn(() => new Promise(() => {}));
 
       const { result } = renderHook(() =>
         useApiData(mockApiCall, [], initialData)
@@ -176,6 +178,10 @@ describe("useApiData Hook", () => {
       expect(result.current.loading).toBe(true);
       expect(result.current.data).toEqual([]);
       expect(result.current.error).toBe(null);
+
+      await act(async () => {
+        await waitForNextTick();
+      });
     });
 
     it("should fetch projects with filters", async () => {
@@ -184,6 +190,10 @@ describe("useApiData Hook", () => {
 
       expect(result.current.loading).toBe(true);
       expect(result.current.data).toEqual([]);
+
+      await act(async () => {
+        await waitForNextTick();
+      });
     });
 
     it("should re-fetch when filters change", async () => {
@@ -200,6 +210,10 @@ describe("useApiData Hook", () => {
 
       // Should trigger re-fetch due to dependency change
       expect(result.current).toBeDefined();
+
+      await act(async () => {
+        await waitForNextTick();
+      });
     });
   });
 
@@ -210,6 +224,10 @@ describe("useApiData Hook", () => {
       expect(result.current.loading).toBe(true);
       expect(result.current.data).toEqual([]);
       expect(result.current.error).toBe(null);
+
+      await act(async () => {
+        await waitForNextTick();
+      });
     });
 
     it("should fetch skills with filters", async () => {
@@ -218,6 +236,10 @@ describe("useApiData Hook", () => {
 
       expect(result.current.loading).toBe(true);
       expect(result.current.data).toEqual([]);
+
+      await act(async () => {
+        await waitForNextTick();
+      });
     });
   });
 
@@ -315,7 +337,7 @@ describe("useApiData Hook", () => {
       expect(result.current.loading).toBe(true);
 
       await act(async () => {
-        await waitFor(150);
+        await delay(150);
       });
 
       expect(result.current.loading).toBe(false);

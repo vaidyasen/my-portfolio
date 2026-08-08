@@ -1,8 +1,12 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
+	"regexp"
 	"strconv"
+	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/ritikvaidyasen/portfolio-server/config"
@@ -68,7 +72,7 @@ func GetAdminBlogPosts(c *gin.Context) {
 
 	// Status filter
 	if status := c.Query("status"); status != "" {
-		query = query.Where("status = ?", status)
+		query = query.Where("published = ?", status == "published")
 	}
 
 	// Pagination
@@ -103,6 +107,9 @@ func CreateAdminBlogPost(c *gin.Context) {
 		return
 	}
 
+	blog.Slug = uniqueBlogSlug(blog.Title, blog.Slug, 0)
+	setPublishedAt(&blog)
+
 	result := config.DB.Create(&blog)
 	if result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create blog post"})
@@ -127,13 +134,60 @@ func UpdateAdminBlogPost(c *gin.Context) {
 		return
 	}
 
-	// Update the blog post
-	if err := config.DB.Model(&blog).Updates(updateData).Error; err != nil {
+	updateData.ID = blog.ID
+	updateData.CreatedAt = blog.CreatedAt
+	updateData.Slug = uniqueBlogSlug(updateData.Title, updateData.Slug, blog.ID)
+	setPublishedAt(&updateData)
+
+	if err := config.DB.Save(&updateData).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update blog post"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"blog": blog})
+	c.JSON(http.StatusOK, gin.H{"blog": updateData})
+}
+
+var nonSlugCharacters = regexp.MustCompile(`[^a-z0-9]+`)
+
+func slugify(value string) string {
+	slug := strings.Trim(nonSlugCharacters.ReplaceAllString(strings.ToLower(value), "-"), "-")
+	if slug == "" {
+		return "blog-post"
+	}
+	return slug
+}
+
+func uniqueBlogSlug(title, requestedSlug string, excludeID uint) string {
+	base := requestedSlug
+	if base == "" {
+		base = title
+	}
+	base = slugify(base)
+	candidate := base
+
+	for suffix := 2; ; suffix++ {
+		var count int64
+		query := config.DB.Model(&models.BlogPost{}).Where("slug = ?", candidate)
+		if excludeID != 0 {
+			query = query.Where("id <> ?", excludeID)
+		}
+		query.Count(&count)
+		if count == 0 {
+			return candidate
+		}
+		candidate = fmt.Sprintf("%s-%d", base, suffix)
+	}
+}
+
+func setPublishedAt(blog *models.BlogPost) {
+	if !blog.Published {
+		blog.PublishedAt = nil
+		return
+	}
+	if blog.PublishedAt == nil {
+		now := time.Now()
+		blog.PublishedAt = &now
+	}
 }
 
 func DeleteAdminBlogPost(c *gin.Context) {

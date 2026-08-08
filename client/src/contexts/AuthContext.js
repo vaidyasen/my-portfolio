@@ -4,6 +4,7 @@ import React, {
   createContext,
   useEffect,
   useMemo,
+  useCallback,
 } from "react";
 import PropTypes from "prop-types";
 import AuthService from "../services/AuthService";
@@ -24,7 +25,7 @@ export const AuthProvider = ({ children }) => {
     return AuthService.getToken();
   });
 
-  const login = async (username, password) => {
+  const login = useCallback(async (username, password) => {
     const result = await AuthService.login(username, password);
 
     if (result.success) {
@@ -34,18 +35,18 @@ export const AuthProvider = ({ children }) => {
     }
 
     return result;
-  };
+  }, []);
 
-  const logout = async () => {
+  const logout = useCallback(async () => {
     const result = await AuthService.logout();
     setToken(null);
     setUser(null);
     return result;
-  };
+  }, []);
 
-  const isAuthenticated = () => {
+  const isAuthenticated = useCallback(() => {
     return AuthService.isAuthenticated();
-  };
+  }, []);
 
   // Initialize on mount
   useEffect(() => {

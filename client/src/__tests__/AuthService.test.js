@@ -1,4 +1,9 @@
 // Mock axios to prevent ApiService initialization issues
+import AuthService, {
+  AuthService as AuthServiceClass,
+} from "../services/AuthService";
+import ApiService from "../services/ApiService";
+
 jest.mock("axios", () => ({
   create: jest.fn(),
   default: {
@@ -15,12 +20,15 @@ jest.mock("../utils/logger", () => ({
 }));
 
 // Mock ApiService before importing
-jest.mock("../services/ApiService");
-
-import AuthService, {
-  AuthService as AuthServiceClass,
-} from "../services/AuthService";
-import ApiService from "../services/ApiService";
+jest.mock("../services/ApiService", () => ({
+  __esModule: true,
+  default: {
+    get: jest.fn(),
+    post: jest.fn(),
+    put: jest.fn(),
+    delete: jest.fn(),
+  },
+}));
 
 const mockedApiService = ApiService;
 
@@ -31,7 +39,10 @@ const localStorageMock = {
   removeItem: jest.fn(),
   clear: jest.fn(),
 };
-global.localStorage = localStorageMock;
+Object.defineProperty(window, "localStorage", {
+  configurable: true,
+  value: localStorageMock,
+});
 
 describe("AuthService", () => {
   beforeEach(() => {

@@ -4,6 +4,8 @@ import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
 import Projects from "../pages/Projects";
 
+import { refreshDatabase } from "../data/projects";
+
 // Mock the projects data module
 jest.mock("../data/projects", () => ({
   refreshDatabase: jest.fn(),
@@ -102,8 +104,6 @@ jest.mock("framer-motion", () => ({
   AnimatePresence: ({ children }) => <>{children}</>,
 }));
 
-import { refreshDatabase } from "../data/projects";
-
 describe("Projects Component", () => {
   const mockProjects = [
     {
@@ -162,9 +162,9 @@ describe("Projects Component", () => {
 
     await waitFor(() => {
       expect(screen.getByText("React Project")).toBeInTheDocument();
-      expect(screen.getByText("Node.js API")).toBeInTheDocument();
-      expect(screen.getByText("Python Script")).toBeInTheDocument();
     });
+    expect(screen.getByText("Node.js API")).toBeInTheDocument();
+    expect(screen.getByText("Python Script")).toBeInTheDocument();
   });
 
   test("displays project details correctly", async () => {
@@ -271,9 +271,9 @@ describe("Projects Component", () => {
 
     await waitFor(() => {
       expect(screen.getByText("React Project")).toBeInTheDocument();
-      expect(screen.queryByText("Node.js API")).not.toBeInTheDocument();
-      expect(screen.queryByText("Python Script")).not.toBeInTheDocument();
     });
+    expect(screen.queryByText("Node.js API")).not.toBeInTheDocument();
+    expect(screen.queryByText("Python Script")).not.toBeInTheDocument();
   });
 
   test("renders project titles and descriptions", async () => {
@@ -281,9 +281,9 @@ describe("Projects Component", () => {
 
     await waitFor(() => {
       expect(screen.getByText("React Project")).toBeInTheDocument();
-      expect(screen.getByText("Node.js API")).toBeInTheDocument();
-      expect(screen.getByText("Python Script")).toBeInTheDocument();
     });
+    expect(screen.getByText("Node.js API")).toBeInTheDocument();
+    expect(screen.getByText("Python Script")).toBeInTheDocument();
 
     // Check descriptions are rendered
     expect(

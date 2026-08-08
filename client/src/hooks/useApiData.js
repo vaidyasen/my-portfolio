@@ -2,7 +2,9 @@
  * Custom hooks for data fetching with consistent patterns
  * Follows Single Responsibility and Interface Segregation principles
  */
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
+import ProjectService from "../services/ProjectService";
+import SkillService from "../services/SkillService";
 
 /**
  * Generic hook for API data fetching
@@ -14,13 +16,20 @@ export const useApiData = (apiCall, dependencies = [], initialData = null) => {
   const [data, setData] = useState(initialData);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const apiCallRef = useRef(apiCall);
+  apiCallRef.current = apiCall;
+  const dependencyKey = JSON.stringify(dependencies);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
 
-      const result = await apiCall();
+      const result = await apiCallRef.current();
+
+      if (!result) {
+        return;
+      }
 
       if (result.success) {
         setData(result.data);
@@ -32,11 +41,11 @@ export const useApiData = (apiCall, dependencies = [], initialData = null) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchData();
-  }, dependencies);
+  }, [fetchData, dependencyKey]);
 
   return {
     data,
@@ -50,17 +59,9 @@ export const useApiData = (apiCall, dependencies = [], initialData = null) => {
  * Hook for projects data
  */
 export const useProjects = (filters = {}) => {
-  const [projectService, setProjectService] = useState(null);
-
-  useEffect(() => {
-    import("../services/ProjectService").then((module) => {
-      setProjectService(module.default);
-    });
-  }, []);
-
   return useApiData(
-    () => projectService?.getProjects(filters),
-    [projectService, JSON.stringify(filters)],
+    () => ProjectService.getProjects(filters),
+    [JSON.stringify(filters)],
     []
   );
 };
@@ -69,17 +70,9 @@ export const useProjects = (filters = {}) => {
  * Hook for skills data
  */
 export const useSkills = (filters = {}) => {
-  const [skillService, setSkillService] = useState(null);
-
-  useEffect(() => {
-    import("../services/SkillService").then((module) => {
-      setSkillService(module.default);
-    });
-  }, []);
-
   return useApiData(
-    () => skillService?.getSkills(filters),
-    [skillService, JSON.stringify(filters)],
+    () => SkillService.getSkills(filters),
+    [JSON.stringify(filters)],
     []
   );
 };

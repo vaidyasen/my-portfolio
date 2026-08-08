@@ -12,24 +12,25 @@ func RegisterRoutes(r *gin.Engine) {
 	api := r.Group("/api")
 	{
 		api.GET("/projects", controllers.GetProjects)
+		api.GET("/projects/:id", controllers.GetProjectByID)
 		api.GET("/skills", controllers.GetSkills)
 		api.GET("/blogs", controllers.GetBlogs)
 		api.GET("/blogs/:slug", controllers.GetBlogBySlug)
 		api.POST("/contact", controllers.SubmitContact)
 		api.GET("/resume", controllers.GetResume)
 	}
-	
+
 	// Auth routes
 	auth := r.Group("/auth")
 	{
 		auth.POST("/login", controllers.AdminLogin)
-		auth.POST("/setup", controllers.CreateAdminUser) // Remove in production
-		auth.POST("/migrate-projects", controllers.MigrateExistingProjects) // One-time migration
-		auth.POST("/update-projects", controllers.UpdateProjectsFromGitHub) // Update projects with GitHub data
+		auth.POST("/setup", controllers.CreateAdminUser)                      // Remove in production
+		auth.POST("/migrate-projects", controllers.MigrateExistingProjects)   // One-time migration
+		auth.POST("/update-projects", controllers.UpdateProjectsFromGitHub)   // Update projects with GitHub data
 		auth.POST("/real-projects", controllers.UpdateWithRealGitHubProjects) // Update with real GitHub projects
-		auth.POST("/seed-skills", controllers.SeedSkills) // Seed initial skills data
+		auth.POST("/seed-skills", controllers.SeedSkills)                     // Seed initial skills data
 	}
-	
+
 	// Admin routes - protected by JWT and admin role
 	admin := r.Group("/admin")
 	admin.Use(middleware.AuthMiddleware())
@@ -37,11 +38,11 @@ func RegisterRoutes(r *gin.Engine) {
 	{
 		// Dashboard
 		admin.GET("/dashboard", controllers.GetAdminDashboard)
-		
+
 		// Admin user management
 		admin.GET("/user", controllers.GetAdminUser)
 		admin.PUT("/user", controllers.UpdateAdminUser)
-		
+
 		// Projects CRUD
 		projectsAdmin := admin.Group("/projects")
 		{
@@ -51,7 +52,7 @@ func RegisterRoutes(r *gin.Engine) {
 			projectsAdmin.PUT("/:id", controllers.UpdateAdminProject)
 			projectsAdmin.DELETE("/:id", controllers.DeleteAdminProject)
 		}
-		
+
 		// Skills CRUD
 		skillsAdmin := admin.Group("/skills")
 		{
@@ -60,7 +61,7 @@ func RegisterRoutes(r *gin.Engine) {
 			skillsAdmin.PUT("/:id", controllers.UpdateAdminSkill)
 			skillsAdmin.DELETE("/:id", controllers.DeleteAdminSkill)
 		}
-		
+
 		// Blog Posts CRUD
 		blogsAdmin := admin.Group("/blogs")
 		{
@@ -69,7 +70,7 @@ func RegisterRoutes(r *gin.Engine) {
 			blogsAdmin.PUT("/:id", controllers.UpdateAdminBlogPost)
 			blogsAdmin.DELETE("/:id", controllers.DeleteAdminBlogPost)
 		}
-		
+
 		// Contact Messages Management
 		contactsAdmin := admin.Group("/contacts")
 		{
@@ -79,8 +80,10 @@ func RegisterRoutes(r *gin.Engine) {
 			contactsAdmin.DELETE("/:id", controllers.DeleteAdminContact)
 		}
 	}
-	
+
 	// Health check endpoint
+	r.StaticFile("/resume.pdf", "resume.pdf")
+
 	r.GET("/health", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"status":  "ok",

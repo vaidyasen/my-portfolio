@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 
 export default function Footer() {
+  const currentYear = new Date().getFullYear();
   const socialLinks = [
     {
       name: "GitHub",
@@ -147,7 +148,7 @@ export default function Footer() {
           viewport={{ once: true }}
         >
           <p className="text-gray-400 text-sm mb-4 md:mb-0">
-            © 2025 Ritik Vaidyasen. All rights reserved. Built with ❤️ using
+            © {currentYear} Ritik Vaidyasen. All rights reserved. Built with ❤️ using
             React & Go.
           </p>
           <div className="flex items-center space-x-4 text-sm text-gray-400">

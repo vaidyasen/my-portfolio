@@ -5,7 +5,7 @@
 import axios from "axios";
 import { apiLogger } from "../utils/logger";
 
-class ApiService {
+export class ApiService {
   constructor(baseURL = process.env.REACT_APP_API_URL || "") {
     this.client = axios.create({
       baseURL,
@@ -21,11 +21,12 @@ class ApiService {
       (config) => {
         const token = localStorage.getItem("admin_token");
         if (token) {
+          config.headers = config.headers || {};
           config.headers.Authorization = `Bearer ${token}`;
         }
         return config;
       },
-      (error) => Promise.reject(new Error(error))
+      (error) => Promise.reject(error)
     );
 
     // Response interceptor for error handling
@@ -36,7 +37,7 @@ class ApiService {
           localStorage.removeItem("admin_token");
           window.location.href = "/admin/login";
         }
-        return Promise.reject(new Error(error.message));
+        return Promise.reject(error);
       }
     );
   }
@@ -79,17 +80,23 @@ class ApiService {
   }
 
   handleError(error) {
+    const status = error.response?.status;
     const message =
-      error.response?.data?.error || error.message || "An error occurred";
+      error.response?.data?.error ||
+      error.response?.data?.message ||
+      error.message ||
+      (status ? `Request failed with status ${status}` : "An error occurred");
     apiLogger.error("API request failed", error);
 
     return {
       success: false,
       error: message,
-      status: error.response?.status,
+      status,
     };
   }
 }
 
 // Singleton instance
-export default new ApiService();
+const apiService = new ApiService();
+
+export default apiService;

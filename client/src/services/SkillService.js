@@ -47,4 +47,6 @@ export class SkillService {
   }
 }
 
-export default new SkillService();
+const skillService = new SkillService();
+
+export default skillService;

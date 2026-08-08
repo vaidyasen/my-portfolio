@@ -8,7 +8,7 @@ import (
 
 func GetResume(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
-		"url": "https://yourdomain.com/resume.pdf",
+		"url":  "/resume.pdf",
 		"name": "Ritik_Vaidyasen_Resume.pdf",
 	})
 }

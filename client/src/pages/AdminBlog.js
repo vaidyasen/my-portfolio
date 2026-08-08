@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import axios from "axios";
 import AdminLayout from "../components/AdminLayout";
+import ApiService from "../services/ApiService";
 
 const AdminBlog = () => {
   const [blogs, setBlogs] = useState([]);
@@ -19,27 +19,27 @@ const AdminBlog = () => {
     featured_image: "",
   });
 
-  const statusOptions = ["draft", "published", "archived"];
+  const statusOptions = ["draft", "published"];
 
-  useEffect(() => {
-    fetchBlogs();
-  }, []);
-
-  const fetchBlogs = async () => {
+  const fetchBlogs = useCallback(async () => {
     try {
-      const response = await axios.get("/admin/blogs", {
-        params: {
-          search: searchTerm,
-          status: statusFilter,
-        },
-      });
+      const queryParams = new URLSearchParams();
+      if (searchTerm) queryParams.set("search", searchTerm);
+      if (statusFilter) queryParams.set("status", statusFilter);
+
+      const endpoint = `/admin/blogs${
+        queryParams.toString() ? `?${queryParams}` : ""
+      }`;
+      const response = await ApiService.get(endpoint);
+      if (!response.success) throw new Error(response.error);
+
       setBlogs(response.data.blogs || []);
     } catch (error) {
       console.error("Error fetching blogs:", error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [searchTerm, statusFilter]);
 
   useEffect(() => {
     const delayedSearch = setTimeout(() => {
@@ -47,24 +47,34 @@ const AdminBlog = () => {
     }, 300);
 
     return () => clearTimeout(delayedSearch);
-  }, [searchTerm, statusFilter]);
+  }, [fetchBlogs]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const blogData = {
-        ...formData,
+        title: formData.title,
+        content: formData.content,
+        excerpt: formData.excerpt,
+        image: formData.featured_image,
+        published: formData.status === "published",
         tags: formData.tags
           .split(",")
           .map((tag) => tag.trim())
           .filter((tag) => tag),
       };
 
+      let response;
       if (editingBlog) {
-        await axios.put(`/admin/blogs/${editingBlog.id}`, blogData);
+        response = await ApiService.put(
+          `/admin/blogs/${editingBlog.id}`,
+          blogData
+        );
       } else {
-        await axios.post("/admin/blogs", blogData);
+        response = await ApiService.post("/admin/blogs", blogData);
       }
+      if (!response.success) throw new Error(response.error);
+
       fetchBlogs();
       resetForm();
       setShowModal(false);
@@ -76,7 +86,8 @@ const AdminBlog = () => {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this blog post?")) {
       try {
-        await axios.delete(`/admin/blogs/${id}`);
+        const response = await ApiService.delete(`/admin/blogs/${id}`);
+        if (!response.success) throw new Error(response.error);
         fetchBlogs();
       } catch (error) {
         console.error("Error deleting blog:", error);
@@ -90,9 +101,9 @@ const AdminBlog = () => {
       title: blog.title,
       content: blog.content,
       excerpt: blog.excerpt,
-      status: blog.status,
+      status: blog.published ? "published" : "draft",
       tags: blog.tags ? blog.tags.join(", ") : "",
-      featured_image: blog.featured_image || "",
+      featured_image: blog.image || "",
     });
     setShowModal(true);
   };
@@ -119,6 +130,8 @@ const AdminBlog = () => {
         return "bg-yellow-100 text-yellow-800/20";
     }
   };
+
+  const getBlogStatus = (blog) => (blog.published ? "published" : "draft");
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -227,10 +240,10 @@ const AdminBlog = () => {
                       </h3>
                       <span
                         className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(
-                          blog.status
+                          getBlogStatus(blog)
                         )}`}
                       >
-                        {blog.status}
+                        {getBlogStatus(blog)}
                       </span>
                     </div>
 

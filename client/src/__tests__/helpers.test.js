@@ -10,23 +10,6 @@ import {
 } from "../utils/helpers";
 
 // Mock document.createElement for sanitizeHtml test
-const mockDiv = {
-  set textContent(value) {
-    this._textContent = value;
-    // When textContent is set, innerHTML should be the escaped version
-    this._innerHTML = value;
-  },
-  get textContent() {
-    return this._textContent;
-  },
-  get innerHTML() {
-    return this._innerHTML;
-  },
-  _textContent: "",
-  _innerHTML: "",
-};
-
-// Mock document.createElement for sanitizeHtml test
 const mockCreateElement = jest.fn();
 
 // Setup a fresh mock div for each test

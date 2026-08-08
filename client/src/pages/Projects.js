@@ -3,6 +3,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import ProjectCard from "../components/ProjectCard";
 import { refreshDatabase } from "../data/projects";
 
+const API_BASE_URL = process.env.REACT_APP_API_URL || "";
+const RESUME_URL = `${API_BASE_URL}/resume.pdf`;
+
 export default function Projects() {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -213,10 +216,11 @@ export default function Projects() {
           animate="visible"
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8"
         >
-          {filteredProjects.map((project) => (
+          {filteredProjects.map((project, index) => (
             <motion.div key={project.id} variants={itemVariants} layout>
               <ProjectCard
                 project={project}
+                index={index}
                 onClick={() => handleProjectClick(project)}
               />
             </motion.div>
@@ -264,7 +268,7 @@ export default function Projects() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <motion.a
-              href="mailto:your-email@example.com"
+              href="mailto:ritikvaidyasen@gmail.com"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="px-8 py-3 bg-blue-600 text-white rounded-full font-medium hover:bg-blue-700 transition-colors duration-300 shadow-lg"
@@ -272,7 +276,9 @@ export default function Projects() {
               Get In Touch
             </motion.a>
             <motion.a
-              href="/contact"
+              href={RESUME_URL}
+              target="_blank"
+              rel="noopener noreferrer"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="px-8 py-3 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white rounded-full font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-300"

@@ -4,25 +4,24 @@ import axios from "axios";
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8080";
 
+const FALLBACK_SKILLS = [
+ "JavaScript",
+ "React",
+ "Node.js",
+ "Go",
+ "Python",
+ "PostgreSQL",
+ "MongoDB",
+ "Docker",
+ "AWS",
+ "Git",
+ "TailwindCSS",
+ "REST APIs",
+];
+
 export default function About() {
  const [skills, setSkills] = useState([]);
  const [loading, setLoading] = useState(true);
-
- // Fallback skills in case API fails
- const fallbackSkills = [
-  "JavaScript",
-  "React",
-  "Node.js",
-  "Go",
-  "Python",
-  "PostgreSQL",
-  "MongoDB",
-  "Docker",
-  "AWS",
-  "Git",
-  "TailwindCSS",
-  "REST APIs",
- ];
 
  // Fetch skills from API
  useEffect(() => {
@@ -37,12 +36,12 @@ export default function About() {
      setSkills(skillNames);
     } else {
      // Use fallback if no skills in API
-     setSkills(fallbackSkills);
+     setSkills(FALLBACK_SKILLS);
     }
    } catch (error) {
     console.error("Failed to fetch skills:", error);
     // Use fallback skills if API fails
-    setSkills(fallbackSkills);
+    setSkills(FALLBACK_SKILLS);
    } finally {
     setLoading(false);
    }

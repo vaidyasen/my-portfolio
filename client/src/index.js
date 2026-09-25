@@ -8,6 +8,7 @@ const profiles = [
   { label: "GitHub", href: "https://github.com/vaidyasen" },
   { label: "LinkedIn", href: "https://www.linkedin.com/in/vaidyasen/" },
   { label: "LeetCode", href: "https://leetcode.com/u/theNoobKid/" },
+  { label: "Resume", href: resumeUrl },
 ];
 
 const projects = [

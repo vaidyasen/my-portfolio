@@ -1,6 +1,7 @@
 {
   "name": "ritik-portfolio",
   "version": "1.0.0",
+  "homepage": "https://vaidyasen.github.io/my-portfolio",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",

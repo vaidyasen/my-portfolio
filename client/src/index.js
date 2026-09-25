@@ -2,6 +2,8 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 
+const resumeUrl = "https://drive.google.com/file/d/1FfSMyAOmvsHqeRz064dGljgrh5ysFLCy/view?usp=sharing";
+
 const profiles = [
   { label: "GitHub", href: "https://github.com/vaidyasen" },
   { label: "LinkedIn", href: "https://www.linkedin.com/in/vaidyasen/" },
@@ -66,6 +68,7 @@ function App() {
         <nav aria-label="Primary navigation">
           <a href="#work">Work</a>
           <a href="#about">About</a>
+          <a href={resumeUrl} target="_blank" rel="noreferrer">Resume</a>
           <a href="mailto:ritikvaidyasen0@gmail.com">Contact</a>
         </nav>
       </header>

@@ -132,23 +132,34 @@ function App() {
             <h2>Engineer, learner, problem solver.</h2>
           </div>
           <div className="about-grid">
-            <div className="about-copy">
-              <p>
-                I’m a software engineer at Cisco Systems. I enjoy taking a
-                product from an unclear problem to a working, maintainable
-                system, with equal care for the interface and the backend.
-              </p>
-              <p>
-                I earned my B.Tech from MNNIT Allahabad in 2024. Outside work,
-                I build practical tools and keep sharpening my data structures,
-                system design, and cloud engineering skills.
-              </p>
-            </div>
-            <div>
-              <p className="list-label">Core toolkit</p>
-              <ul className="skills">
-                {skills.map((skill) => <li key={skill}>{skill}</li>)}
-              </ul>
+            <figure className="portrait">
+              <img
+                src={`${process.env.PUBLIC_URL}/profilepic.png`}
+                alt="Ritik Vaidyasen"
+                width="800"
+                height="800"
+                loading="lazy"
+              />
+            </figure>
+            <div className="about-details">
+              <div className="about-copy">
+                <p>
+                  I’m a software engineer at Cisco Systems. I enjoy taking a
+                  product from an unclear problem to a working, maintainable
+                  system, with equal care for the interface and the backend.
+                </p>
+                <p>
+                  I earned my B.Tech from MNNIT Allahabad in 2024. Outside work,
+                  I build practical tools and keep sharpening my data structures,
+                  system design, and cloud engineering skills.
+                </p>
+              </div>
+              <div>
+                <p className="list-label">Core toolkit</p>
+                <ul className="skills">
+                  {skills.map((skill) => <li key={skill}>{skill}</li>)}
+                </ul>
+              </div>
             </div>
           </div>
         </section>

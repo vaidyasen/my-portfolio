@@ -163,7 +163,27 @@ h2 {
 .project-arrow { padding-top: 6px; text-align: right; font-size: 1.35rem; }
 .text-link { display: inline-block; margin-top: 34px; }
 
-.about-grid { display: grid; grid-template-columns: 1.45fr 0.8fr; gap: 100px; }
+.about-grid {
+  display: grid;
+  grid-template-columns: minmax(260px, 340px) 1fr;
+  gap: clamp(48px, 8vw, 110px);
+  align-items: start;
+}
+
+.portrait {
+  margin: 0;
+  overflow: hidden;
+  background: var(--card);
+}
+
+.portrait img {
+  width: 100%;
+  height: auto;
+  display: block;
+  filter: contrast(1.03);
+}
+
+.about-details { display: grid; gap: 48px; }
 
 .about-copy p {
   margin: 0 0 24px;
@@ -178,6 +198,12 @@ h2 {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.12em;
+}
+
+.skills {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 32px;
 }
 
 .skills li { padding: 13px 0; border-bottom: 1px solid var(--line); font-weight: 600; }
@@ -206,6 +232,8 @@ h2 {
   .project { grid-template-columns: 34px 1fr; gap: 10px; padding-block: 28px; }
   .project-arrow { display: none; }
   .about-grid { grid-template-columns: 1fr; gap: 48px; }
+  .portrait { width: min(100%, 340px); }
+  .skills { grid-template-columns: 1fr; }
   .footer { padding: 28px 0; align-items: flex-start; flex-direction: column; justify-content: center; }
 }
 

@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 
-const resumeUrl = "https://drive.google.com/file/d/1FfSMyAOmvsHqeRz064dGljgrh5ysFLCy/view?usp=sharing";
+const resumeUrl = "https://drive.google.com/drive/folders/1V8MU6kBot0JBpJD6nqlmAK2f0Dc6Wm-4?usp=sharing";
 
 const profiles = [
   { label: "GitHub", href: "https://github.com/vaidyasen" },

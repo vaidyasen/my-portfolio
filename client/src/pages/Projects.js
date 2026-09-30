@@ -3,8 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import ProjectCard from "../components/ProjectCard";
 import { refreshDatabase } from "../data/projects";
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || "";
-const RESUME_URL = `${API_BASE_URL}/resume.pdf`;
+const RESUME_URL = "https://drive.google.com/drive/folders/1V8MU6kBot0JBpJD6nqlmAK2f0Dc6Wm-4?usp=sharing";
 
 export default function Projects() {
   const [projects, setProjects] = useState([]);
